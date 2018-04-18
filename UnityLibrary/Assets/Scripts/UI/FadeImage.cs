@@ -58,7 +58,7 @@ namespace ErksUnityLibrary
         /// <param name="destroyAfterFade"></param>
         /// <param name="fadeSpeed"></param>
         /// <param name="threshold"></param>
-        public void StartFade(string inOrOut, bool destroyAfterFade, float fadeSpeed, float threshold = 1f)
+        public void StartFade(string inOrOut, bool destroyAfterFade = false, float fadeSpeed = 1f, float threshold = 1f)
         {
             this.destroyAfterFade = destroyAfterFade;
             this.fadeSpeed = fadeSpeed;

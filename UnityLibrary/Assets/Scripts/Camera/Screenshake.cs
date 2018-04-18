@@ -4,41 +4,38 @@ namespace ErksUnityLibrary
 {
     public class Screenshake : MonoBehaviour
     {
-        private Vector3 originalCameraPosition;
+        public ScreenshakeDimension dimension;
+        public enum ScreenshakeDimension { TwoD, ThreeD }
 
-        private float shakeAmp = 0f;
+        private Vector3 initialShakePosition;
+        private float shakeOffset;
 
-        void Start()
+        private void Update()
         {
-            originalCameraPosition = Camera.main.transform.position;
+            if (shakeOffset != 0f) Shake();
         }
 
-        public void Shake(float duration, float amp, Vector3 origin, float repeatRate = 0.01f)
+        public void StartShake(float offset, float delayTillStop = 0f)
         {
-            origin.z = transform.position.z;
-            originalCameraPosition = origin;
-            shakeAmp = amp;
-            InvokeRepeating("CameraShake", 0, repeatRate);
-            Invoke("StopShaking", duration);
+            initialShakePosition = transform.localPosition;
+            shakeOffset = offset;
+
+            if (delayTillStop > 0f) Invoke("StopShake", delayTillStop);
         }
 
-        void CameraShake()
+        public void StopShake()
         {
-            if (shakeAmp > 0f)
-            {
-                Vector3 pp = originalCameraPosition;
-                float quakeAmp = Random.Range(-shakeAmp, shakeAmp);
-                pp.x += quakeAmp;
-                quakeAmp = Random.Range(-shakeAmp, shakeAmp);
-                pp.y += quakeAmp;
-                transform.position = pp;
-            }
+            shakeOffset = 0f;
+            transform.localPosition = initialShakePosition;
         }
 
-        void StopShaking()
+        private void Shake()
         {
-            CancelInvoke("CameraShake");
-            transform.position = originalCameraPosition;
+            if (dimension == ScreenshakeDimension.TwoD)
+                transform.localPosition = initialShakePosition + new Vector3(Random.Range(-shakeOffset, shakeOffset), Random.Range(-shakeOffset, shakeOffset), 0f);
+
+            if (dimension == ScreenshakeDimension.ThreeD)
+                transform.localPosition = initialShakePosition + new Vector3(Random.Range(-shakeOffset, shakeOffset), Random.Range(-shakeOffset, shakeOffset), Random.Range(-shakeOffset, shakeOffset));
         }
     }
 }
