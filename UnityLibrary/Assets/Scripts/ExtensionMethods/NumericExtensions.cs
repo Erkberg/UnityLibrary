@@ -6,5 +6,15 @@
         {
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         }
+
+        public static float Squared(this float f)
+        {
+            return f * f;
+        }
+
+        public static int Squared(this int i)
+        {
+            return i * i;
+        }
     }
 }
