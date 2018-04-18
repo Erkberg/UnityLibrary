@@ -1,15 +1,18 @@
 ﻿using System;
 
-public static class Timing
+namespace ErksUnityLibrary
 {
-    public static void AddTimeAndCheckMax(ref float parameter, float maximum, float deltaTime, Action callback)
+    public static class Timing
     {
-        parameter += deltaTime;
-
-        if (parameter >= maximum)
+        public static void AddTimeAndCheckMax(ref float parameter, float maximum, float deltaTime, Action callback)
         {
-            parameter = 0f;
-            callback();
+            parameter += deltaTime;
+
+            if (parameter >= maximum)
+            {
+                parameter = 0f;
+                callback();
+            }
         }
     }
 }

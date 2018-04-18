@@ -1,19 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class ParticleExtensions
+namespace ErksUnityLibrary
 {
-    public static void SetEmissionOverTime(this ParticleSystem particles, float value)
+    public static class ParticleExtensions
     {
-        if (particles)
+        public static void SetEmissionOverTime(this ParticleSystem particles, float value)
         {
-            var em = particles.emission;
-            em.rateOverTime = value;
-        }
-        else
-        {
-            Debug.Log("no particles object");
+            if (particles)
+            {
+                var em = particles.emission;
+                em.rateOverTime = value;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
         }
     }
 }

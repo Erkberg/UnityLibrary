@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 
-public class DestroyAfterSeconds : MonoBehaviour
+namespace ErksUnityLibrary
 {
-    public float delay = 5f;
-
-    // Use this for initialization
-    void Start()
+    public class DestroyAfterSeconds : MonoBehaviour
     {
-        Destroy(gameObject, delay);
+        public float delay = 5f;
+
+        // Use this for initialization
+        void Start()
+        {
+            Destroy(gameObject, delay);
+        }
     }
 }
