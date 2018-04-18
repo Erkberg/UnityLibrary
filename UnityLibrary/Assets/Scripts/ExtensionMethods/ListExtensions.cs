@@ -7,12 +7,14 @@ namespace ErksUnityLibrary
     {
         public static T GetRandomItem<T>(this List<T> list)
         {
-            return list[UnityEngine.Random.Range(0, list.Count)];
+            if (list.Count == 0) return default(T);
+            else return list[UnityEngine.Random.Range(0, list.Count)];
         }
 
         public static T GetLastItem<T>(this List<T> list)
         {
-            return list[list.Count - 1];
+            if (list.Count == 0) return default(T);
+            else return list[list.Count - 1];
         }
 
         public static void ShuffleList<T>(this List<T> list)

@@ -9,10 +9,7 @@ public class Test : MonoBehaviour
 	// Use this for initialization
 	void Start ()
 	{
-		List<int> list = new List<int>();
-		for (int i = 0; i < 10; i++) list.Add(i);
-		list.ShuffleList();
-        foreach (int i in list) Debug.Log(i);
+        GetComponent<TypeWriter>().SetText("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.");
 	}
 
 }
