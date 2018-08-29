@@ -31,8 +31,10 @@ namespace ErksUnityLibrary
         private string text;
         private string finalText;
 
-        private const string inputButton = "Fire1";
+        public bool skipFromOutside = false;
+        public string skipInputButton = "Fire1";
 
+        private bool isActive = false;
         private bool isTyping = false;
 
         private System.Action callback;
@@ -54,43 +56,54 @@ namespace ErksUnityLibrary
             {
                 CheckSpeechPlayback();
 
-                if (Input.GetButtonDown(inputButton))
+                if (!skipFromOutside && Input.GetButtonDown(skipInputButton))
                 {
-                    if (textSkipType == TextSkipType.SlowSkip)
-                    {
-                        Skip();
-                    }
-                    else
-                    {
-                        if (currentWaitTime == waitTime)
-                        {
-                            currentWaitTime = waitTimeFast;
-                        }
-                        else
-                        {
-                            if (currentWaitTime == waitTimeFast)
-                            {
-                                Skip();
-                            }
-                        }
-                    }
+                    SkipTyping();
                 }
             }
             else
             {
-                if (Input.GetButtonDown(inputButton))
+                if (!skipFromOutside && Input.GetButtonDown(skipInputButton))
                 {
-                    ClearText();
-
-                    if (pauseGame)
-                        Time.timeScale = 1f;
-
-                    if (callback != null)
-                    {
-                        callback();
-                        callback = null;
-                    }                        
+                    EndTyping();             
                 }
+            }
+        }
+
+        public void SkipTyping()
+        {
+            if (textSkipType == TextSkipType.SlowSkip)
+            {
+                Skip();
+            }
+            else
+            {
+                if (currentWaitTime == waitTime)
+                {
+                    currentWaitTime = waitTimeFast;
+                }
+                else
+                {
+                    if (currentWaitTime == waitTimeFast)
+                    {
+                        Skip();
+                    }
+                }
+            }
+        }
+
+        public void EndTyping()
+        {
+            ClearText();
+            isActive = false;
+
+            if (pauseGame)
+                Time.timeScale = 1f;
+
+            if (callback != null)
+            {
+                callback();
+                callback = null;
             }
         }
 
@@ -103,6 +116,11 @@ namespace ErksUnityLibrary
             OnTypingEnded();
         }
 
+        public void SetCallback(System.Action action)
+        {
+            callback = action;
+        }
+
         public void SetText(string text)
         {
             if (pauseGame)
@@ -112,6 +130,7 @@ namespace ErksUnityLibrary
             this.text = text;
             ClearText();
             isTyping = true;
+            isActive = true;
             finalText = text;
             StartCoroutine(Type());
         }
@@ -205,6 +224,16 @@ namespace ErksUnityLibrary
                     audioSource.PlayOneShotRandomVolumePitch(typeClips.GetRandomItem());
                 }
             }
+        }
+
+        public bool IsTyping()
+        {
+            return isTyping;
+        }
+
+        public bool IsActive()
+        {
+            return isActive;
         }
     }
 }
