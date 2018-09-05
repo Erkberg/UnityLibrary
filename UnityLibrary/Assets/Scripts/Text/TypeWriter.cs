@@ -154,6 +154,7 @@ namespace ErksUnityLibrary
                 string firstChar = text[0].ToString();
                 targetText.text += firstChar;
                 CheckTypeSound();
+				text = text.Substring(1);
 
                 if(voiceOverDuration != 0f)
                     yield return new WaitForSecondsRealtime(voiceOverDuration / finalText.Length);
@@ -168,8 +169,7 @@ namespace ErksUnityLibrary
                         yield return new WaitForSecondsRealtime(currentWaitTime);
                     }
                 }
-
-                text = text.Substring(1);
+                
                 StartCoroutine(Type());
             }
             else
