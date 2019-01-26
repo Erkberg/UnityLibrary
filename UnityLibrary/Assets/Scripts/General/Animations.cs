@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 
-public class Animations : MonoBehaviour
+
+namespace ErksUnityLibrary
 {
-    public static float GetAnimatorClipLength(Animator animator, string name)
+    public class Animations : MonoBehaviour
     {
-        float time = 0f;
-        RuntimeAnimatorController ac = animator.runtimeAnimatorController;
-
-        for (int i = 0; i < ac.animationClips.Length; i++)
+        public static float GetAnimatorClipLength(Animator animator, string name)
         {
-            if (ac.animationClips[i].name == name)
-            {
-                time = ac.animationClips[i].length;
-            }
-        }
+            float time = 0f;
+            RuntimeAnimatorController ac = animator.runtimeAnimatorController;
 
-        return time;
+            for (int i = 0; i < ac.animationClips.Length; i++)
+            {
+                if (ac.animationClips[i].name == name)
+                {
+                    time = ac.animationClips[i].length;
+                }
+            }
+
+            return time;
+        }
     }
 }
