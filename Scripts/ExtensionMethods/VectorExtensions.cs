@@ -43,5 +43,15 @@ namespace ErksUnityLibrary
             v2.y = y;
             return v2;
         }
+
+        public static bool IsApproxEqual(this Vector3 vec, Vector3 otherVec, float precision = Vector3.kEpsilon)
+        {
+            return ((otherVec - vec).sqrMagnitude < (precision * precision));
+        }
+
+        public static bool IsApproxEqual(this Vector2 vec, Vector2 otherVec, float precision = Vector2.kEpsilon)
+        {
+            return ((otherVec - vec).sqrMagnitude < (precision * precision));
+        }
     }
 }

@@ -16,5 +16,63 @@
         {
             return i * i;
         }
+
+        public static int GetDirection(float origin, float target)
+        {
+            int direction = 0;
+
+            if (target < origin)
+            {
+                direction = -1;
+            }
+            if (target > origin)
+            {
+                direction = 1;
+            }
+
+            return direction;
+        }
+
+        public static int GetDirectionFromFloat(float value)
+        {
+            int direction = 0;
+
+            if (value < 0f)
+            {
+                direction = -1;
+            }
+            if (value > 0f)
+            {
+                direction = 1;
+            }
+
+            return direction;
+        }
+
+        public static bool IsBetweenValues(this float value, float lower, float upper, bool includeBorders)
+        {
+            if (includeBorders)
+            {
+                if (value >= lower && value <= upper)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (value > lower && value < upper)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
     }
 }
