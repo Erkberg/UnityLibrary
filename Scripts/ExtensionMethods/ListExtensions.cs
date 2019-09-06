@@ -1,10 +1,21 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ErksUnityLibrary
 {
     public static class ListExtensions
     {
+        public static bool IsNullOrEmpty(this ICollection collection)
+        {
+            return collection == null || collection.Count == 0;
+        }
+
+        public static bool IsNullOrEmpty<T>(this T[] array)
+        {
+            return array == null || array.Length == 0;
+        }
+
         public static T GetRandomItem<T>(this List<T> list)
         {
             if (list.Count == 0) return default(T);
