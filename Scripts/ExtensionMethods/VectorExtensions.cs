@@ -44,6 +44,57 @@ namespace ErksUnityLibrary
             return v2;
         }
 
+        public static Vector2 XY(this Vector3 v3)
+        {
+            return new Vector2(v3.x, v3.y);
+        }
+        public static Vector2 XZ(this Vector3 v3)
+        {
+            return new Vector2(v3.x, v3.z);
+        }
+        public static Vector2 YX(this Vector3 v3)
+        {
+            return new Vector2(v3.y, v3.x);
+        }
+        public static Vector2 YZ(this Vector3 v3)
+        {
+            return new Vector2(v3.y, v3.z);
+        }
+        public static Vector2 ZX(this Vector3 v3)
+        {
+            return new Vector2(v3.z, v3.x);
+        }
+        public static Vector2 ZY(this Vector3 v3)
+        {
+            return new Vector2(v3.z, v3.y);
+        }
+
+        public static Vector3 XY_(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(v2.x, v2.y, a);
+        }
+        public static Vector3 X_Y(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(v2.x, a, v2.y);
+        }
+        public static Vector3 _XY(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(a, v2.x, v2.y);
+        }
+        public static Vector3 YX_(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(v2.y, v2.x, a);
+        }
+        public static Vector3 Y_X(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(v2.y, a, v2.x);
+        }
+        public static Vector3 _YX(this Vector2 v2, float a = 0)
+        {
+            return new Vector3(a, v2.y, v2.x);
+        }
+
+
         public static bool IsApproxEqual(this Vector3 vec, Vector3 otherVec, float precision = Vector3.kEpsilon)
         {
             return ((otherVec - vec).sqrMagnitude < (precision * precision));
