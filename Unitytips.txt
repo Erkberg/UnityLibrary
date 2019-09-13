@@ -1,0 +1,9 @@
+Random.rotation
+Tag EditorOnly
+Default params: void DoSomething(Vector3 v3 = default(Vector3))
+Gameobject.scene
+[ContextMenu("")]
+Nested Tags / Layer etc. by using /
+Keyboard shortcuts for menu items: % for Ctrl/Cmd, # for Shift, & for Alt, _ for no combination, before hotkey, i.e. [MenuItem("Header/Do something %#1")]
+Collider overview: https://docs.unity3d.com/Manual/CollidersOverview.html
+Hook into log: Application.logMessageReceived += (message, stackTrace, type) => { DoSomething(); };

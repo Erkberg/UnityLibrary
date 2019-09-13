@@ -22,6 +22,12 @@ namespace ErksUnityLibrary
             else return list[UnityEngine.Random.Range(0, list.Count)];
         }
 
+        public static T GetFirstItem<T>(this List<T> list)
+        {
+            if (list.Count == 0) return default(T);
+            else return list[0];
+        }
+
         public static T GetLastItem<T>(this List<T> list)
         {
             if (list.Count == 0) return default(T);
