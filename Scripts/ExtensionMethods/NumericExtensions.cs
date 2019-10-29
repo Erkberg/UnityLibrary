@@ -1,4 +1,6 @@
-﻿namespace ErksUnityLibrary
+﻿using UnityEngine;
+
+namespace ErksUnityLibrary
 {
     public static class NumericExtensions
     {
@@ -73,6 +75,11 @@
                     return false;
                 }
             }
+        }
+
+        public static bool IsApproxEqual(this float value, float otherValue)
+        {
+            return Mathf.Abs(value - otherValue) < 0.001f;
         }
     }
 }
