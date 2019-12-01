@@ -19,6 +19,12 @@ namespace ErksUnityLibrary.HexMap
             SelectColor(0);
         }
 
+        private IEnumerator Start()
+        {
+            yield return null;
+            GenerateRandomMap();
+        }
+
         void Update()
         {
             if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
@@ -51,6 +57,18 @@ namespace ErksUnityLibrary.HexMap
         {
             cell.color = activeColor;
             cell.Elevation = activeElevation;
+            hexGrid.Refresh();
+        }
+
+        private void GenerateRandomMap()
+        {
+            foreach(HexCell cell in FindObjectsOfType<HexCell>())
+            {
+                cell.color = colors[Random.Range(0, colors.Length)];
+                cell.Elevation = Random.Range(0, 4);
+                cell.color = colors[cell.Elevation];
+            }
+
             hexGrid.Refresh();
         }
     }

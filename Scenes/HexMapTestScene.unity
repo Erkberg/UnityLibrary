@@ -230,6 +230,7 @@ MonoBehaviour:
   gridCanvas: {fileID: 1309782897}
   cellLabelPrefab: {fileID: 4595983590924127677, guid: ebcd13099171d8942807ba22633a662e,
     type: 3}
+  noiseSource: {fileID: 2800000, guid: dece72ed668296e469b798cb2649a413, type: 3}
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!4 &111270756
 Transform:
@@ -513,10 +514,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   colors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 0, g: 0, b: 0, a: 1}
+  - {r: 0.4, g: 0.4, b: 0.8666667, a: 1}
   - {r: 0.4, g: 0.2, b: 0.2, a: 1}
   - {r: 0.2, g: 0.4, b: 0.2, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   hexGrid: {fileID: 111270755}
 --- !u!224 &320675831
 RectTransform:
@@ -550,7 +551,7 @@ GameObject:
   - component: {fileID: 480140184}
   - component: {fileID: 480140185}
   m_Layer: 5
-  m_Name: ToggleGreen
+  m_Name: Toggle4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -703,9 +704,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'White
-
-'
+  m_Text: 1
 --- !u!222 &684424958
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -892,7 +891,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Black
+  m_Text: 2
 --- !u!222 &986504198
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1478,7 +1477,7 @@ GameObject:
   - component: {fileID: 1412892218}
   - component: {fileID: 1412892219}
   m_Layer: 5
-  m_Name: ToggleBrown
+  m_Name: Toggle3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1697,7 +1696,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Brown
+  m_Text: 3
 --- !u!222 &1481393045
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1991,7 +1990,7 @@ GameObject:
   - component: {fileID: 1611735351}
   - component: {fileID: 1611735352}
   m_Layer: 5
-  m_Name: ToggleWhite
+  m_Name: Toggle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2277,7 +2276,7 @@ GameObject:
   - component: {fileID: 1941155690}
   - component: {fileID: 1941155691}
   m_Layer: 5
-  m_Name: ToggleBlack
+  m_Name: Toggle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2430,7 +2429,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Green
+  m_Text: 4
 --- !u!222 &1956599559
 CanvasRenderer:
   m_ObjectHideFlags: 0

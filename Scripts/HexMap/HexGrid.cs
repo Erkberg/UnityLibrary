@@ -16,12 +16,16 @@ namespace ErksUnityLibrary.HexMap
         public Canvas gridCanvas;
         public Text cellLabelPrefab;
 
+        public Texture2D noiseSource;
+
         public Color defaultColor = Color.white;
 
         private HexCell[] cells;
 
         void Awake()
         {
+            HexMetrics.noiseSource = noiseSource;
+
             cells = new HexCell[height * width];
 
             for (int z = 0, i = 0; z < height; z++)
@@ -36,6 +40,11 @@ namespace ErksUnityLibrary.HexMap
         private void Start()
         {
             hexMesh.Triangulate(cells);
+        }
+
+        void OnEnable()
+        {
+            HexMetrics.noiseSource = noiseSource;
         }
 
         private void CreateCell(int x, int z, int i)
@@ -86,6 +95,8 @@ namespace ErksUnityLibrary.HexMap
             label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
             label.text = cell.coordinates.ToStringOnSeparateLines();
             cell.uiRect = label.rectTransform;
+
+            cell.Elevation = 0;
         }
 
         public void Refresh()

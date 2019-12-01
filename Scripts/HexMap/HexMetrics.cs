@@ -12,13 +12,18 @@ namespace ErksUnityLibrary.HexMap
         public const float solidFactor = 0.8f;
         public const float blendFactor = 1f - solidFactor;
 
-        public const float elevationStep = outerRadius * 0.33f;
+        public const float elevationStep = outerRadius * 0.2f;
 
         public const bool useTerraces = true;
         public const int terracesPerSlope = 2;
         public const int terraceSteps = terracesPerSlope * 2 + 1;
         public const float horizontalTerraceStepSize = 1f / terraceSteps;
         public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
+
+        public static Texture2D noiseSource;
+        public const float cellPerturbStrength = outerRadius * 0.5f;
+        public const float noiseScale = 0.003f;
+        public const float elevationPerturbStrength = elevationStep;
 
         private static Vector3[] corners =
         {
@@ -84,6 +89,11 @@ namespace ErksUnityLibrary.HexMap
                 return HexEdgeType.Slope;
             }
             return HexEdgeType.Cliff;
+        }
+
+        public static Vector4 SampleNoise(Vector3 position)
+        {
+            return noiseSource.GetPixelBilinear(position.x * noiseScale, position.z * noiseScale);
         }
     }
 
