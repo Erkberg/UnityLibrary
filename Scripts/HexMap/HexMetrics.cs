@@ -25,6 +25,8 @@ namespace ErksUnityLibrary.HexMap
         public const float noiseScale = 0.003f;
         public const float elevationPerturbStrength = elevationStep;
 
+        public const int chunkSizeX = 5, chunkSizeZ = 5;
+
         private static Vector3[] corners =
         {
             new Vector3(0f, 0f, outerRadius),
