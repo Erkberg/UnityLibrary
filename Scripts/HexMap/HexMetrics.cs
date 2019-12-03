@@ -6,8 +6,10 @@ namespace ErksUnityLibrary.HexMap
 {
     public static class HexMetrics
     {
+        public const float outerToInner = 0.866025404f;
+        public const float innerToOuter = 1f / outerToInner;
         public const float outerRadius = 1f;
-        public const float innerRadius = outerRadius * 0.866025404f;
+        public const float innerRadius = outerRadius * outerToInner;        
 
         public const float solidFactor = 0.8f;
         public const float blendFactor = 1f - solidFactor;
@@ -26,6 +28,9 @@ namespace ErksUnityLibrary.HexMap
         public const float elevationPerturbStrength = elevationStep;
 
         public const int chunkSizeX = 5, chunkSizeZ = 5;
+
+        public const float streamBedElevationOffset = -1f;
+        public const float riverSurfaceElevationOffset = -0.2f;
 
         private static Vector3[] corners =
         {
@@ -56,6 +61,11 @@ namespace ErksUnityLibrary.HexMap
         public static Vector3 GetSecondSolidCorner(HexDirection direction)
         {
             return corners[(int)direction + 1] * solidFactor;
+        }
+
+        public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
+        {
+            return (corners[(int)direction] + corners[(int)direction + 1]) * (0.5f * solidFactor);
         }
 
         public static Vector3 GetBridge(HexDirection direction)
@@ -91,6 +101,15 @@ namespace ErksUnityLibrary.HexMap
                 return HexEdgeType.Slope;
             }
             return HexEdgeType.Cliff;
+        }
+
+        public static Vector3 Perturb(Vector3 position)
+        {
+            Vector4 sample = HexMetrics.SampleNoise(position);
+            position.x += (sample.x * 2f - 1f) * HexMetrics.cellPerturbStrength;
+            //position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
+            position.z += (sample.z * 2f - 1f) * HexMetrics.cellPerturbStrength;
+            return position;
         }
 
         public static Vector4 SampleNoise(Vector3 position)

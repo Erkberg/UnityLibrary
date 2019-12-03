@@ -7,6 +7,11 @@ namespace ErksUnityLibrary.HexMap
 {
     public class HexMapEditor : MonoBehaviour
     {
+        private enum OptionalToggle
+        {
+            Ignore, Yes, No
+        }
+
         public Color[] colors;
 
         public HexGrid hexGrid;
@@ -18,7 +23,12 @@ namespace ErksUnityLibrary.HexMap
         private bool applyElevation = true;
 
         private int brushSize;
-        
+
+        private OptionalToggle riverMode;
+
+        private bool isDrag;
+        private HexDirection dragDirection;
+        private HexCell previousCell;
 
         void Awake()
         {
@@ -37,6 +47,10 @@ namespace ErksUnityLibrary.HexMap
             {
                 HandleInput();
             }
+            else
+            {
+                previousCell = null;
+            }
         }
 
         void HandleInput()
@@ -45,8 +59,35 @@ namespace ErksUnityLibrary.HexMap
             RaycastHit hit;
             if (Physics.Raycast(inputRay, out hit))
             {
-                EditCells(hexGrid.GetCell(hit.point));
+                HexCell currentCell = hexGrid.GetCell(hit.point);
+                if (previousCell && previousCell != currentCell)
+                {
+                    ValidateDrag(currentCell);
+                }
+                else
+                {
+                    isDrag = false;
+                }
+                EditCells(currentCell);
+                previousCell = currentCell;
             }
+            else
+            {
+                previousCell = null;
+            }
+        }
+
+        private void ValidateDrag(HexCell currentCell)
+        {
+            for (dragDirection = HexDirection.NE; dragDirection <= HexDirection.NW; dragDirection++)
+            {
+                if (previousCell.GetNeighbor(dragDirection) == currentCell)
+                {
+                    isDrag = true;
+                    return;
+                }
+            }
+            isDrag = false;
         }
 
         public void SelectColor(int index)
@@ -108,12 +149,30 @@ namespace ErksUnityLibrary.HexMap
                 {
                     cell.Elevation = activeElevation;
                 }
-            }            
+            }
+
+            if (riverMode == OptionalToggle.No)
+            {
+                cell.RemoveRiver();
+            }
+            else if (isDrag && riverMode == OptionalToggle.Yes)
+            {
+                HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
+                if (otherCell)
+                {
+                    otherCell.SetOutgoingRiver(dragDirection);
+                }
+            }
         }
 
         public void ShowUI(bool visible)
         {
             hexGrid.ShowUI(visible);
+        }
+
+        public void SetRiverMode(int mode)
+        {
+            riverMode = (OptionalToggle)mode;
         }
 
         private void GenerateRandomMap()
