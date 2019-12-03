@@ -20,11 +20,11 @@ namespace ErksUnityLibrary.HexMap
         private bool applyColor;
 
         private int activeElevation;
-        private bool applyElevation = true;
+        private bool applyElevation;
 
         private int brushSize;
 
-        private OptionalToggle riverMode;
+        private OptionalToggle riverMode, roadMode;
 
         private bool isDrag;
         private HexDirection dragDirection;
@@ -32,7 +32,7 @@ namespace ErksUnityLibrary.HexMap
 
         void Awake()
         {
-            SelectColor(0);
+            SelectColor(-1);
         }
 
         private IEnumerator Start()
@@ -155,12 +155,25 @@ namespace ErksUnityLibrary.HexMap
             {
                 cell.RemoveRiver();
             }
-            else if (isDrag && riverMode == OptionalToggle.Yes)
+
+            if (roadMode == OptionalToggle.No)
+            {
+                cell.RemoveRoads();
+            }
+
+            if (isDrag)
             {
                 HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
                 if (otherCell)
                 {
-                    otherCell.SetOutgoingRiver(dragDirection);
+                    if (riverMode == OptionalToggle.Yes)
+                    {
+                        otherCell.SetOutgoingRiver(dragDirection);
+                    }
+                    if (roadMode == OptionalToggle.Yes)
+                    {
+                        otherCell.AddRoad(dragDirection);
+                    }
                 }
             }
         }
@@ -173,6 +186,11 @@ namespace ErksUnityLibrary.HexMap
         public void SetRiverMode(int mode)
         {
             riverMode = (OptionalToggle)mode;
+        }
+
+        public void SetRoadMode(int mode)
+        {
+            roadMode = (OptionalToggle)mode;
         }
 
         private void GenerateRandomMap()

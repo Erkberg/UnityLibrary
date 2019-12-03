@@ -23,7 +23,7 @@ namespace ErksUnityLibrary.HexMap
         public const float verticalTerraceStepSize = 1f / (terracesPerSlope + 1);
 
         public static Texture2D noiseSource;
-        public const float cellPerturbStrength = outerRadius * 0.5f;
+        public const float cellPerturbStrength = outerRadius;
         public const float noiseScale = 0.003f;
         public const float elevationPerturbStrength = elevationStep;
 
