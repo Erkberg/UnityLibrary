@@ -20,7 +20,9 @@ namespace ErksUnityLibrary.HexMap
         private bool applyColor;
 
         private int activeElevation;
+        private int activeWaterLevel;
         private bool applyElevation;
+        private bool applyWaterLevel;
 
         private int brushSize;
 
@@ -174,6 +176,10 @@ namespace ErksUnityLibrary.HexMap
                     {
                         otherCell.AddRoad(dragDirection);
                     }
+                    if (applyWaterLevel)
+                    {
+                        cell.WaterLevel = activeWaterLevel;
+                    }
                 }
             }
         }
@@ -186,6 +192,16 @@ namespace ErksUnityLibrary.HexMap
         public void SetRiverMode(int mode)
         {
             riverMode = (OptionalToggle)mode;
+        }
+
+        public void SetApplyWaterLevel(bool toggle)
+        {
+            applyWaterLevel = toggle;
+        }
+
+        public void SetWaterLevel(float level)
+        {
+            activeWaterLevel = (int)level;
         }
 
         public void SetRoadMode(int mode)

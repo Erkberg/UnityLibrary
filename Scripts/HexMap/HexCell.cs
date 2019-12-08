@@ -52,15 +52,7 @@ namespace ErksUnityLibrary.HexMap
                 uiPosition.z = -position.y;
                 uiRect.localPosition = uiPosition;
 
-                // Handle rivers
-                if (hasOutgoingRiver && elevation < GetNeighbor(outgoingRiver).elevation)
-                {
-                    RemoveOutgoingRiver();
-                }
-                if (hasIncomingRiver && elevation > GetNeighbor(incomingRiver).elevation)
-                {
-                    RemoveIncomingRiver();
-                }
+                ValidateRivers();
 
                 // Handle roads
                 for (int i = 0; i < roads.Length; i++)
@@ -191,6 +183,44 @@ namespace ErksUnityLibrary.HexMap
         }
         #endregion roads
 
+        #region water
+        public int WaterLevel
+        {
+            get
+            {
+                return waterLevel;
+            }
+            set
+            {
+                if (waterLevel == value)
+                {
+                    return;
+                }
+                waterLevel = value;
+                ValidateRivers();
+                Refresh();
+            }
+        }
+
+        private int waterLevel;
+
+        public bool IsUnderwater
+        {
+            get
+            {
+                return waterLevel > elevation;
+            }
+        }
+
+        public float WaterSurfaceY
+        {
+            get
+            {
+                return (waterLevel + HexMetrics.waterElevationOffset) * HexMetrics.elevationStep;
+            }
+        }
+        #endregion water
+
         #region rivers
         private bool hasIncomingRiver, hasOutgoingRiver;
         private HexDirection incomingRiver, outgoingRiver;
@@ -207,7 +237,7 @@ namespace ErksUnityLibrary.HexMap
         {
             get
             {
-                return (elevation + HexMetrics.riverSurfaceElevationOffset) * HexMetrics.elevationStep;
+                return (elevation + HexMetrics.waterElevationOffset) * HexMetrics.elevationStep;
             }
         }
 
@@ -240,7 +270,14 @@ namespace ErksUnityLibrary.HexMap
             get
             {
                 return outgoingRiver;
+
+
             }
+        }
+
+        private bool IsValidRiverDestination(HexCell neighbor)
+        {
+            return neighbor && (elevation >= neighbor.elevation || waterLevel == neighbor.elevation);
         }
 
         public bool HasRiver
@@ -280,7 +317,7 @@ namespace ErksUnityLibrary.HexMap
             }
 
             HexCell neighbor = GetNeighbor(direction);
-            if (!neighbor || elevation < neighbor.elevation)
+            if (!IsValidRiverDestination(neighbor))
             {
                 return;
             }
@@ -333,6 +370,18 @@ namespace ErksUnityLibrary.HexMap
             HexCell neighbor = GetNeighbor(outgoingRiver);
             neighbor.hasIncomingRiver = false;
             neighbor.RefreshSelfOnly();
+        }
+
+        private void ValidateRivers()
+        {
+            if (hasOutgoingRiver && !IsValidRiverDestination(GetNeighbor(outgoingRiver)))
+            {
+                RemoveOutgoingRiver();
+            }
+            if (hasIncomingRiver && !GetNeighbor(incomingRiver).IsValidRiverDestination(this))
+            {
+                RemoveIncomingRiver();
+            }
         }
         #endregion rivers
     }

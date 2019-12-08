@@ -1,4 +1,4 @@
-﻿Shader "Custom/River"
+﻿Shader "Custom/Estuary"
 {
     Properties
     {
@@ -9,11 +9,11 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent+1" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
 		LOD 200
 		
 		CGPROGRAM
-		#pragma surface surf Standard alpha // fullforwardshadows
+		#pragma surface surf Standard alpha vertex:vert // fullforwardshadows
 		#pragma target 3.0
 
 		#include "Water.cginc"
@@ -23,6 +23,8 @@
         struct Input
         {
             float2 uv_MainTex;
+			float2 riverUV;
+			float3 worldPos;
         };
 
         half _Glossiness;
@@ -36,12 +38,26 @@
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
+		void vert (inout appdata_full v, out Input o) 
+		{
+			UNITY_INITIALIZE_OUTPUT(Input, o);
+			o.riverUV = v.texcoord1.xy;
+		}
+
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            float river = River(IN.uv_MainTex, _MainTex);
-			
-			fixed4 c = saturate(_Color + river);
+			float shore = IN.uv_MainTex.y;
+			float foam = Foam(shore, IN.worldPos.xz, _MainTex);
+			float waves = Waves(IN.worldPos.xz, _MainTex);
+			waves *= 1 - shore;
 
+			float shoreWater = max(foam, waves);
+
+			float river = River(IN.riverUV, _MainTex);
+
+			float water = lerp(shoreWater, river, IN.uv_MainTex.x);
+
+			fixed4 c = saturate(_Color + water);
 			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;

@@ -30,7 +30,9 @@ namespace ErksUnityLibrary.HexMap
         public const int chunkSizeX = 5, chunkSizeZ = 5;
 
         public const float streamBedElevationOffset = -1f;
-        public const float riverSurfaceElevationOffset = -0.2f;
+        public const float waterElevationOffset = -0.2f;
+        public const float waterFactor = 0.6f;
+        public const float waterBlendFactor = 1f - waterFactor;
 
         private static Vector3[] corners =
         {
@@ -63,6 +65,16 @@ namespace ErksUnityLibrary.HexMap
             return corners[(int)direction + 1] * solidFactor;
         }
 
+        public static Vector3 GetFirstWaterCorner(HexDirection direction)
+        {
+            return corners[(int)direction] * waterFactor;
+        }
+
+        public static Vector3 GetSecondWaterCorner(HexDirection direction)
+        {
+            return corners[(int)direction + 1] * waterFactor;
+        }
+
         public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
         {
             return (corners[(int)direction] + corners[(int)direction + 1]) * (0.5f * solidFactor);
@@ -71,6 +83,11 @@ namespace ErksUnityLibrary.HexMap
         public static Vector3 GetBridge(HexDirection direction)
         {
             return (corners[(int)direction] + corners[(int)direction + 1]) * blendFactor;
+        }
+
+        public static Vector3 GetWaterBridge(HexDirection direction)
+        {
+            return (corners[(int)direction] + corners[(int)direction + 1]) * waterBlendFactor;
         }
 
         public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)
