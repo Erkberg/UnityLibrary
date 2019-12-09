@@ -9,6 +9,7 @@ namespace ErksUnityLibrary.HexMap
     {
         public HexMesh terrain, rivers, roads, water, waterShore, estuaries;
         public Canvas gridCanvas;
+        public HexFeatureManager features;
 
         private HexCell[] cells;
         private bool refresh = true;
@@ -54,6 +55,7 @@ namespace ErksUnityLibrary.HexMap
             water.Clear();
             waterShore.Clear();
             estuaries.Clear();
+            features.Clear();
 
             for (int i = 0; i < cells.Length; i++)
             {
@@ -66,6 +68,7 @@ namespace ErksUnityLibrary.HexMap
             water.Apply();
             waterShore.Apply();
             estuaries.Apply();
+            features.Apply();
         }
 
         void Triangulate(HexCell cell)
@@ -73,6 +76,11 @@ namespace ErksUnityLibrary.HexMap
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 Triangulate(d, cell);
+            }
+
+            if (!cell.IsUnderwater && !cell.HasRiver && !cell.HasRoads)
+            {
+                features.AddFeature(cell, cell.Position);
             }
         }
 
@@ -103,6 +111,11 @@ namespace ErksUnityLibrary.HexMap
             else
             {
                 TriangulateWithoutRiver(direction, cell, center, e);
+
+                if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
+                {
+                    features.AddFeature(cell, (center + e.v1 + e.v5) * (1f / 3f));
+                }
             }
 
             if (direction <= HexDirection.SE)
@@ -447,6 +460,11 @@ namespace ErksUnityLibrary.HexMap
             if (nextHasRiver)
             {
                 TriangulateRoadEdge(roadCenter, mR, center);
+            }
+
+            if (!cell.IsUnderwater && !cell.HasRoadThroughEdge(direction))
+            {
+                features.AddFeature(cell, (center + e.v1 + e.v5) * (1f / 3f));
             }
         }
 

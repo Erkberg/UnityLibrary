@@ -18,12 +18,15 @@ namespace ErksUnityLibrary.HexMap
 
         public Color defaultColor = Color.white;
 
+        public int seed = 1234;
+
         private HexGridChunk[] chunks;
         private HexCell[] cells;
 
         void Awake()
         {
             HexMetrics.noiseSource = noiseSource;
+            HexMetrics.InitializeHashGrid(seed);
 
             cellCountX = chunkCountX * HexMetrics.chunkSizeX;
             cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -34,7 +37,11 @@ namespace ErksUnityLibrary.HexMap
 
         void OnEnable()
         {
-            HexMetrics.noiseSource = noiseSource;
+            if (!HexMetrics.noiseSource)
+            {
+                HexMetrics.noiseSource = noiseSource;
+                HexMetrics.InitializeHashGrid(seed);
+            }
         }
 
         public HexCell GetCell(HexCoordinates coordinates)
