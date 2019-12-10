@@ -180,6 +180,24 @@ namespace ErksUnityLibrary.HexMap
 
         private int urbanLevel, farmLevel, plantLevel;
 
+        public bool Walled
+        {
+            get
+            {
+                return walled;
+            }
+            set
+            {
+                if (walled != value)
+                {
+                    walled = value;
+                    Refresh();
+                }
+            }
+        }
+
+        private bool walled;
+
         #region roads
         [SerializeField]
         private bool[] roads;

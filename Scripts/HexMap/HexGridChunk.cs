@@ -141,7 +141,10 @@ namespace ErksUnityLibrary.HexMap
             bridge.y = neighbor.Position.y - cell.Position.y;
             EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
 
-            if (cell.HasRiverThroughEdge(direction))
+            bool hasRiver = cell.HasRiverThroughEdge(direction);
+            bool hasRoad = cell.HasRoadThroughEdge(direction);
+
+            if (hasRiver)
             {
                 e2.v3.y = neighbor.StreamBedY;
 
@@ -164,12 +167,14 @@ namespace ErksUnityLibrary.HexMap
 
             if (cell.GetEdgeType(direction) == HexEdgeType.Slope && HexMetrics.useTerraces)
             {
-                TriangulateEdgeTerraces(e1, cell, e2, neighbor, cell.HasRoadThroughEdge(direction));
+                TriangulateEdgeTerraces(e1, cell, e2, neighbor, hasRoad);
             }
             else
             {
-                TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color, cell.HasRoadThroughEdge(direction));
+                TriangulateEdgeStrip(e1, cell.Color, e2, neighbor.Color, hasRoad);
             }
+
+            features.AddWall(e1, cell, e2, neighbor, hasRiver, hasRoad);
 
             // Triangle / Corner
             HexCell nextNeighbor = cell.GetNeighbor(direction.Next());
@@ -725,6 +730,8 @@ namespace ErksUnityLibrary.HexMap
                 terrain.AddTriangle(bottom, left, right);
                 terrain.AddTriangleColor(bottomCell.Color, leftCell.Color, rightCell.Color);
             }
+
+            features.AddWall(bottom, bottomCell, left, leftCell, right, rightCell);
         }
 
         void TriangulateCornerTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)

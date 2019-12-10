@@ -28,7 +28,7 @@ namespace ErksUnityLibrary.HexMap
 
         private int brushSize;
 
-        private OptionalToggle riverMode, roadMode;
+        private OptionalToggle riverMode, roadMode, walledMode;
 
         private bool isDrag;
         private HexDirection dragDirection;
@@ -178,6 +178,10 @@ namespace ErksUnityLibrary.HexMap
                     {
                         otherCell.AddRoad(dragDirection);
                     }
+                    if (walledMode != OptionalToggle.Ignore)
+                    {
+                        cell.Walled = walledMode == OptionalToggle.Yes;
+                    }
                     if (applyWaterLevel)
                     {
                         cell.WaterLevel = activeWaterLevel;
@@ -261,6 +265,11 @@ namespace ErksUnityLibrary.HexMap
             activePlantLevel = (int)level;
         }
 
+        public void SetWalledMode(int mode)
+        {
+            walledMode = (OptionalToggle)mode;
+        }
+
         private void GenerateRandomMap()
         {
             foreach(HexCell cell in FindObjectsOfType<HexCell>())
@@ -268,6 +277,7 @@ namespace ErksUnityLibrary.HexMap
                 cell.Color = colors[Random.Range(0, colors.Length)];
                 cell.Elevation = Random.Range(0, 4);
                 cell.Color = colors[cell.Elevation];
+                cell.WaterLevel = 1;
             }
         }
     }
