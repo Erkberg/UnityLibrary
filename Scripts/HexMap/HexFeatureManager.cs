@@ -8,6 +8,8 @@ namespace ErksUnityLibrary.HexMap
     {
         public HexFeatureCollection[] urbanCollections, farmCollections, plantCollections;
         public HexMesh walls;
+        public Transform wallTower, bridge;
+        public Transform[] special;
 
         private Transform container;
 
@@ -30,6 +32,11 @@ namespace ErksUnityLibrary.HexMap
 
         public void AddFeature(HexCell cell, Vector3 position)
         {
+            if (cell.IsSpecial)
+            {
+                return;
+            }
+
             HexHash hash = HexMetrics.SampleHashGrid(position);
             Transform prefab = PickPrefab(urbanCollections, cell.UrbanLevel, hash.a, hash.d);
             Transform otherPrefab = PickPrefab(farmCollections, cell.FarmLevel, hash.b, hash.d);
@@ -106,7 +113,7 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
-        private void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight)
+        private void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight, bool addTower = false)
         {
             nearLeft = HexMetrics.Perturb(nearLeft);
             farLeft = HexMetrics.Perturb(farLeft);
@@ -138,6 +145,16 @@ namespace ErksUnityLibrary.HexMap
             walls.AddQuadUnperturbed(v2, v1, v4, v3);
 
             walls.AddQuadUnperturbed(t1, t2, v3, v4);
+
+            if(addTower)
+            {
+                Transform towerInstance = Instantiate(wallTower);
+                towerInstance.transform.localPosition = (left + right) * 0.5f;
+                Vector3 rightDirection = right - left;
+                rightDirection.y = 0f;
+                towerInstance.transform.right = rightDirection;
+                towerInstance.SetParent(container, false);
+            }
         }
 
         public void AddWall(Vector3 c1, HexCell cell1, Vector3 c2, HexCell cell2, Vector3 c3, HexCell cell3)
@@ -191,7 +208,13 @@ namespace ErksUnityLibrary.HexMap
             {
                 if (hasRighWall)
                 {
-                    AddWallSegment(pivot, left, pivot, right);
+                    bool hasTower = false;
+                    if (leftCell.Elevation == rightCell.Elevation)
+                    {
+                        HexHash hash = HexMetrics.SampleHashGrid((pivot + left + right) * (1f / 3f));
+                        hasTower = hash.e < HexMetrics.wallTowerThreshold;
+                    }
+                    AddWallSegment(pivot, left, pivot, right, hasTower);
                 }
                 else if (leftCell.Elevation < rightCell.Elevation)
                 {
@@ -253,5 +276,26 @@ namespace ErksUnityLibrary.HexMap
             walls.AddTriangleUnperturbed(pointTop, v3, v4);
         }
         #endregion walls
+
+        public void AddBridge(Vector3 roadCenter1, Vector3 roadCenter2)
+        {
+            roadCenter1 = HexMetrics.Perturb(roadCenter1);
+            roadCenter2 = HexMetrics.Perturb(roadCenter2);
+            Transform instance = Instantiate(bridge);
+            instance.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
+            instance.forward = roadCenter2 - roadCenter1;
+            float length = Vector3.Distance(roadCenter1, roadCenter2);
+            instance.localScale = new Vector3(1f, 1f, length * (1f / HexMetrics.bridgeDesignLength));
+            instance.SetParent(container, false);
+        }
+
+        public void AddSpecialFeature(HexCell cell, Vector3 position)
+        {
+            Transform instance = Instantiate(special[cell.SpecialIndex - 1]);
+            instance.localPosition = HexMetrics.Perturb(position);
+            HexHash hash = HexMetrics.SampleHashGrid(position);
+            instance.localRotation = Quaternion.Euler(0f, 360f * hash.e, 0f);
+            instance.SetParent(container, false);
+        }
     }
 }

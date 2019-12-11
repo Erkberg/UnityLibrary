@@ -10,6 +10,32 @@ namespace ErksUnityLibrary.HexMap
         public RectTransform uiRect;
         public HexGridChunk chunk;
 
+        private int specialIndex;
+
+        public int SpecialIndex
+        {
+            get
+            {
+                return specialIndex;
+            }
+            set
+            {
+                if (specialIndex != value && specialIndex >= 0 && !HasRiver)
+                {
+                    specialIndex = value;
+                    RefreshSelfOnly();
+                }
+            }
+        }
+
+        public bool IsSpecial
+        {
+            get
+            {
+                return specialIndex > 0;
+            }
+        }
+
         private Color color = Color.white;
         public Color Color
         {
@@ -69,7 +95,9 @@ namespace ErksUnityLibrary.HexMap
 
         public int GetElevationDifference(HexDirection direction)
         {
-            int difference = elevation - GetNeighbor(direction).elevation;
+            int difference = elevation;
+            if(GetNeighbor(direction))
+                difference = elevation - GetNeighbor(direction).elevation;
             return difference >= 0 ? difference : -difference;
         }
 
@@ -244,9 +272,13 @@ namespace ErksUnityLibrary.HexMap
         private void SetRoad(int index, bool state)
         {
             roads[index] = state;
-            neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
 
-            neighbors[index].RefreshSelfOnly();
+            if(neighbors[index] != null)
+            {
+                neighbors[index].roads[(int)((HexDirection)index).Opposite()] = state;
+                neighbors[index].RefreshSelfOnly();
+            }
+            
             RefreshSelfOnly();
         }
         #endregion roads
@@ -398,10 +430,12 @@ namespace ErksUnityLibrary.HexMap
 
             hasOutgoingRiver = true;
             outgoingRiver = direction;
+            specialIndex = 0;
 
             neighbor.RemoveIncomingRiver();
             neighbor.hasIncomingRiver = true;
             neighbor.incomingRiver = direction.Opposite();
+            neighbor.specialIndex = 0;
 
             SetRoad((int)direction, false);
         }

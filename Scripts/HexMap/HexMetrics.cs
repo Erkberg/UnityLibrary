@@ -41,6 +41,10 @@ namespace ErksUnityLibrary.HexMap
         public const float wallHeight = 0.5f;
         public const float wallThickness = 0.1f;
         public const float wallElevationOffset = verticalTerraceStepSize;
+        public const float wallTowerThreshold = 0.5f;
+        public const float wallYOffset = -0.1f;
+
+        public const float bridgeDesignLength = 0.7f;
 
         public static Vector3 WallThicknessOffset(Vector3 near, Vector3 far)
         {
@@ -56,7 +60,7 @@ namespace ErksUnityLibrary.HexMap
             near.x += (far.x - near.x) * 0.5f;
             near.z += (far.z - near.z) * 0.5f;
             float v = near.y < far.y ? wallElevationOffset : (1f - wallElevationOffset);
-            near.y += (far.y - near.y) * v;
+            near.y += (far.y - near.y) * v + wallYOffset;
             return near;
         }
 

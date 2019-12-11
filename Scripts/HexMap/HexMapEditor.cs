@@ -23,8 +23,8 @@ namespace ErksUnityLibrary.HexMap
         private int activeWaterLevel;
         private bool applyElevation;
         private bool applyWaterLevel;
-        private int activeUrbanLevel, activeFarmLevel, activePlantLevel;
-        private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel;
+        private int activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
+        private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 
         private int brushSize;
 
@@ -206,6 +206,10 @@ namespace ErksUnityLibrary.HexMap
                     {
                         cell.RemoveRoads();
                     }
+                    if (applySpecialIndex)
+                    {
+                        cell.SpecialIndex = activeSpecialIndex;
+                    }
                 }
             }
         }
@@ -270,6 +274,16 @@ namespace ErksUnityLibrary.HexMap
             walledMode = (OptionalToggle)mode;
         }
 
+        public void SetApplySpecialIndex(bool toggle)
+        {
+            applySpecialIndex = toggle;
+        }
+
+        public void SetSpecialIndex(float index)
+        {
+            activeSpecialIndex = (int)index;
+        }
+
         private void GenerateRandomMap()
         {
             foreach(HexCell cell in FindObjectsOfType<HexCell>())
@@ -278,7 +292,21 @@ namespace ErksUnityLibrary.HexMap
                 cell.Elevation = Random.Range(0, 4);
                 cell.Color = colors[cell.Elevation];
                 cell.WaterLevel = 1;
+
+                cell.UrbanLevel = Random.Range(-8, 4);
+                cell.FarmLevel = Random.Range(-8, 4);
+                cell.PlantLevel = Random.Range(-8, 4);
+                cell.SpecialIndex = Random.Range(-16, 4);
+
+                cell.Walled = Random.Range(0f, 1f) < 0.5f;
             }
+        }
+
+        private HexDirection GetRandomDirection()
+        {
+            var values = HexDirection.GetValues(typeof(HexDirection));
+            System.Random random = new System.Random();
+            return (HexDirection)values.GetValue(random.Next(values.Length));
         }
     }
 }
