@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using System.IO;
 
 namespace ErksUnityLibrary.HexMap
 {
@@ -12,12 +13,7 @@ namespace ErksUnityLibrary.HexMap
             Ignore, Yes, No
         }
 
-        public Color[] colors;
-
         public HexGrid hexGrid;
-
-        private Color activeColor;
-        private bool applyColor;
 
         private int activeElevation;
         private int activeWaterLevel;
@@ -27,17 +23,13 @@ namespace ErksUnityLibrary.HexMap
         private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
 
         private int brushSize;
+        private int activeTerrainTypeIndex;
 
         private OptionalToggle riverMode, roadMode, walledMode;
 
         private bool isDrag;
         private HexDirection dragDirection;
         private HexCell previousCell;
-
-        void Awake()
-        {
-            SelectColor(-1);
-        }
 
         private IEnumerator Start()
         {
@@ -94,15 +86,6 @@ namespace ErksUnityLibrary.HexMap
             isDrag = false;
         }
 
-        public void SelectColor(int index)
-        {
-            applyColor = index >= 0;
-            if (applyColor)
-            {
-                activeColor = colors[index];
-            }
-        }
-
         public void SetElevation(float elevation)
         {
             activeElevation = (int)elevation;
@@ -144,14 +127,14 @@ namespace ErksUnityLibrary.HexMap
         {
             if(cell)
             {
-                if (applyColor)
-                {
-                    cell.Color = activeColor;
-                }
-
                 if (applyElevation)
                 {
                     cell.Elevation = activeElevation;
+                }
+
+                if (activeTerrainTypeIndex >= 0)
+                {
+                    cell.TerrainTypeIndex = activeTerrainTypeIndex;
                 }
             }
 
@@ -288,9 +271,8 @@ namespace ErksUnityLibrary.HexMap
         {
             foreach(HexCell cell in FindObjectsOfType<HexCell>())
             {
-                cell.Color = colors[Random.Range(0, colors.Length)];
                 cell.Elevation = Random.Range(0, 4);
-                cell.Color = colors[cell.Elevation];
+                cell.TerrainTypeIndex = cell.Elevation;
                 cell.WaterLevel = 1;
 
                 cell.UrbanLevel = Random.Range(-8, 4);
@@ -302,11 +284,43 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
+        public void SetTerrainTypeIndex(int index)
+        {
+            activeTerrainTypeIndex = index;
+        }
+
         private HexDirection GetRandomDirection()
         {
             var values = HexDirection.GetValues(typeof(HexDirection));
             System.Random random = new System.Random();
             return (HexDirection)values.GetValue(random.Next(values.Length));
+        }
+
+        public void Save()
+        {
+            string path = Path.Combine(Application.persistentDataPath, "test.map");
+            using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+            {
+                writer.Write(0);
+                hexGrid.Save(writer);
+            }
+        }
+
+        public void Load()
+        {
+            string path = Path.Combine(Application.persistentDataPath, "test.map");
+            using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
+            {
+                int header = reader.ReadInt32();
+                if (header == 0)
+                {
+                    hexGrid.Load(reader);
+                }
+                else
+                {
+                    Debug.LogWarning("Unknown map format " + header);
+                }
+            }
         }
     }
 }

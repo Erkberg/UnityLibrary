@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 namespace ErksUnityLibrary.HexMap
 {
@@ -14,9 +15,9 @@ namespace ErksUnityLibrary.HexMap
         public HexCell cellPrefab;
         public Text cellLabelPrefab;
 
-        public Texture2D noiseSource;
+        public Color[] colors;
 
-        public Color defaultColor = Color.white;
+        public Texture2D noiseSource;
 
         public int seed = 1234;
 
@@ -27,6 +28,7 @@ namespace ErksUnityLibrary.HexMap
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
+            HexMetrics.colors = colors;
 
             cellCountX = chunkCountX * HexMetrics.chunkSizeX;
             cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -41,6 +43,7 @@ namespace ErksUnityLibrary.HexMap
             {
                 HexMetrics.noiseSource = noiseSource;
                 HexMetrics.InitializeHashGrid(seed);
+                HexMetrics.colors = colors;
             }
         }
 
@@ -108,7 +111,7 @@ namespace ErksUnityLibrary.HexMap
             HexCell cell = cells[i] = Instantiate(cellPrefab);
             cell.transform.localPosition = position;
             cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-            cell.Color = defaultColor;
+            cell.TerrainTypeIndex = 0;
             cell.name = "HexCell - " + cell.coordinates.ToString();
 
             // Neighbors
@@ -165,6 +168,27 @@ namespace ErksUnityLibrary.HexMap
             HexCoordinates coordinates = HexCoordinates.FromPosition(position);
             int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
             return cells[index];
+        }
+
+        public void Save(BinaryWriter writer)
+        {
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i].Save(writer);
+            }
+        }
+
+        public void Load(BinaryReader reader)
+        {
+            for (int i = 0; i < cells.Length; i++)
+            {
+                cells[i].Load(reader);
+            }
+
+            for (int i = 0; i < chunks.Length; i++)
+            {
+                chunks[i].Refresh();
+            }
         }
     }
 }
