@@ -501,13 +501,13 @@ namespace ErksUnityLibrary.HexMap
 
         public void Save(BinaryWriter writer)
         {
-            writer.Write((byte)terrainTypeIndex);
-            writer.Write((byte)elevation);
-            writer.Write((byte)waterLevel);
-            writer.Write((byte)urbanLevel);
-            writer.Write((byte)farmLevel);
-            writer.Write((byte)plantLevel);
-            writer.Write((byte)specialIndex);
+            writer.Write(terrainTypeIndex);
+            writer.Write(elevation);
+            writer.Write(waterLevel);
+            writer.Write(urbanLevel);
+            writer.Write(farmLevel);
+            writer.Write(plantLevel);
+            writer.Write(specialIndex);
             writer.Write(walled);
 
             if (hasIncomingRiver)
@@ -540,14 +540,14 @@ namespace ErksUnityLibrary.HexMap
 
         public void Load(BinaryReader reader)
         {
-            terrainTypeIndex = reader.ReadByte();
-            elevation = reader.ReadByte();
+            terrainTypeIndex = reader.ReadInt32();
+            elevation = reader.ReadInt32();
             RefreshPosition();
-            waterLevel = reader.ReadByte();
-            urbanLevel = reader.ReadByte();
-            farmLevel = reader.ReadByte();
-            plantLevel = reader.ReadByte();
-            specialIndex = reader.ReadByte();
+            waterLevel = reader.ReadInt32();
+            urbanLevel = reader.ReadInt32();
+            farmLevel = reader.ReadInt32();
+            plantLevel = reader.ReadInt32();
+            specialIndex = reader.ReadInt32();
             walled = reader.ReadBoolean();
 
             byte riverData = reader.ReadByte();
