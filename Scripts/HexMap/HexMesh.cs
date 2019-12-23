@@ -10,13 +10,14 @@ namespace ErksUnityLibrary.HexMap
         public MeshFilter meshFilter;        
 
         public bool useCollider, useColors, useUVCoordinates, useUV2Coordinates;
+        public bool useTerrainTypes;
 
         private Mesh hexMesh;
         private MeshCollider meshCollider;
 
         [NonSerialized] private List<Vector2> uvs, uv2s;
 
-        [NonSerialized] private List<Vector3> vertices;
+        [NonSerialized] private List<Vector3> vertices, terrainTypes;
         [NonSerialized] private List<Color> colors;
         [NonSerialized] private List<int> triangles;
 
@@ -50,6 +51,10 @@ namespace ErksUnityLibrary.HexMap
             {
                 uv2s = ListPool<Vector2>.Get();
             }
+            if (useTerrainTypes)
+            {
+                terrainTypes = ListPool<Vector3>.Get();
+            }
 
             triangles = ListPool<int>.Get();
         }
@@ -74,6 +79,11 @@ namespace ErksUnityLibrary.HexMap
             {
                 hexMesh.SetUVs(1, uv2s);
                 ListPool<Vector2>.Add(uv2s);
+            }
+            if (useTerrainTypes)
+            {
+                hexMesh.SetUVs(2, terrainTypes);
+                ListPool<Vector3>.Add(terrainTypes);
             }
 
             hexMesh.SetTriangles(triangles, 0);
@@ -227,6 +237,21 @@ namespace ErksUnityLibrary.HexMap
             uv2s.Add(new Vector2(uMax, vMin));
             uv2s.Add(new Vector2(uMin, vMax));
             uv2s.Add(new Vector2(uMax, vMax));
+        }
+
+        public void AddTriangleTerrainTypes(Vector3 types)
+        {
+            terrainTypes.Add(types);
+            terrainTypes.Add(types);
+            terrainTypes.Add(types);
+        }
+
+        public void AddQuadTerrainTypes(Vector3 types)
+        {
+            terrainTypes.Add(types);
+            terrainTypes.Add(types);
+            terrainTypes.Add(types);
+            terrainTypes.Add(types);
         }
     }
 }

@@ -15,8 +15,6 @@ namespace ErksUnityLibrary.HexMap
         public HexCell cellPrefab;
         public Text cellLabelPrefab;
 
-        public Color[] colors;
-
         public Texture2D noiseSource;
 
         public int seed = 1234;
@@ -28,7 +26,6 @@ namespace ErksUnityLibrary.HexMap
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
-            HexMetrics.colors = colors;
 
             CreateMap(cellCountX, cellCountZ);
         }
@@ -39,7 +36,6 @@ namespace ErksUnityLibrary.HexMap
             {
                 HexMetrics.noiseSource = noiseSource;
                 HexMetrics.InitializeHashGrid(seed);
-                HexMetrics.colors = colors;
             }
         }
 
