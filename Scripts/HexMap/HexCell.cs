@@ -33,6 +33,8 @@ namespace ErksUnityLibrary.HexMap
 
         public int SearchHeuristic { get; set; }
 
+        public int SearchPhase { get; set; }
+
         public int SearchPriority
         {
             get
@@ -52,14 +54,13 @@ namespace ErksUnityLibrary.HexMap
             set
             {
                 distance = value;
-                UpdateDistanceLabel();
             }
         }
 
-        void UpdateDistanceLabel()
+        public void SetLabel(string text)
         {
             Text label = uiRect.GetComponent<Text>();
-            label.text = distance == int.MaxValue ? "" : distance.ToString();
+            label.text = text;
         }
 
         public int SpecialIndex

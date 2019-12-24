@@ -79,22 +79,28 @@ namespace ErksUnityLibrary.HexMap
                 }
                 else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
                 {
-                    if (searchFromCell)
+                    if (searchFromCell != currentCell)
                     {
-                        searchFromCell.DisableHighlight();
-                    }
-                    searchFromCell = currentCell;
-                    searchFromCell.EnableHighlight(Color.blue);
+                        if (searchFromCell)
+                        {
+                            searchFromCell.DisableHighlight();
+                        }
+                        searchFromCell = currentCell;
+                        searchFromCell.EnableHighlight(Color.blue);
 
-                    if (searchToCell)
-                    {
-                        hexGrid.FindPath(searchFromCell, searchToCell);
+                        if (searchToCell)
+                        {
+                            hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                        }
                     }
                 }
                 else if (searchFromCell && searchFromCell != currentCell)
                 {
-                    searchToCell = currentCell;
-                    hexGrid.FindPath(searchFromCell, searchToCell);
+                    if (searchToCell != currentCell)
+                    {
+                        searchToCell = currentCell;
+                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                    }                        
                 }
 
                 previousCell = currentCell;
@@ -325,7 +331,7 @@ namespace ErksUnityLibrary.HexMap
                 cell.PlantLevel = Random.Range(-16, 4);
                 cell.SpecialIndex = Random.Range(-32, 4);
 
-                cell.Walled = Random.Range(0f, 1f) < 0.5f;
+                cell.Walled = Random.Range(0f, 1f) < 0.1f;
             }
         }
 
