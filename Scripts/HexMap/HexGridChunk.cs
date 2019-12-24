@@ -21,7 +21,6 @@ namespace ErksUnityLibrary.HexMap
         void Awake()
         {
             cells = new HexCell[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
-            ShowUI(false);
         }
 
         private void LateUpdate()

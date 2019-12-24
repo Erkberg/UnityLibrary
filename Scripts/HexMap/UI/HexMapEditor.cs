@@ -14,6 +14,7 @@ namespace ErksUnityLibrary.HexMap
         }
 
         public HexGrid hexGrid;
+        public Material terrainMaterial;
 
         private int activeElevation;
         private int activeWaterLevel;
@@ -29,7 +30,14 @@ namespace ErksUnityLibrary.HexMap
 
         private bool isDrag;
         private HexDirection dragDirection;
-        private HexCell previousCell;
+        private HexCell previousCell, searchFromCell, searchToCell;
+
+        private bool editMode;
+
+        private void Awake()
+        {
+            terrainMaterial.DisableKeyword("GRID_ON");
+        }
 
         private IEnumerator Start()
         {
@@ -64,7 +72,31 @@ namespace ErksUnityLibrary.HexMap
                 {
                     isDrag = false;
                 }
-                EditCells(currentCell);
+
+                if(editMode)
+                {
+                    EditCells(currentCell);
+                }
+                else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+                {
+                    if (searchFromCell)
+                    {
+                        searchFromCell.DisableHighlight();
+                    }
+                    searchFromCell = currentCell;
+                    searchFromCell.EnableHighlight(Color.blue);
+
+                    if (searchToCell)
+                    {
+                        hexGrid.FindPath(searchFromCell, searchToCell);
+                    }
+                }
+                else if (searchFromCell && searchFromCell != currentCell)
+                {
+                    searchToCell = currentCell;
+                    hexGrid.FindPath(searchFromCell, searchToCell);
+                }
+
                 previousCell = currentCell;
             }
             else
@@ -197,11 +229,6 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
-        public void ShowUI(bool visible)
-        {
-            hexGrid.ShowUI(visible);
-        }
-
         public void SetRiverMode(int mode)
         {
             riverMode = (OptionalToggle)mode;
@@ -267,6 +294,24 @@ namespace ErksUnityLibrary.HexMap
             activeSpecialIndex = (int)index;
         }
 
+        public void ShowGrid(bool visible)
+        {
+            if (visible)
+            {
+                terrainMaterial.EnableKeyword("GRID_ON");
+            }
+            else
+            {
+                terrainMaterial.DisableKeyword("GRID_ON");
+            }
+        }
+
+        public void SetEditMode(bool toggle)
+        {
+            editMode = toggle;
+            hexGrid.ShowUI(!toggle);
+        }
+
         private void GenerateRandomMap()
         {
             foreach(HexCell cell in FindObjectsOfType<HexCell>())
@@ -275,10 +320,10 @@ namespace ErksUnityLibrary.HexMap
                 cell.TerrainTypeIndex = cell.Elevation;
                 cell.WaterLevel = 1;
 
-                cell.UrbanLevel = Random.Range(-8, 4);
-                cell.FarmLevel = Random.Range(-8, 4);
-                cell.PlantLevel = Random.Range(-8, 4);
-                cell.SpecialIndex = Random.Range(-16, 4);
+                cell.UrbanLevel = Random.Range(-16, 4);
+                cell.FarmLevel = Random.Range(-16, 4);
+                cell.PlantLevel = Random.Range(-16, 4);
+                cell.SpecialIndex = Random.Range(-32, 4);
 
                 cell.Walled = Random.Range(0f, 1f) < 0.5f;
             }

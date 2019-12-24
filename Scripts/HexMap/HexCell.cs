@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.UI;
 
 namespace ErksUnityLibrary.HexMap
 {
@@ -13,6 +14,53 @@ namespace ErksUnityLibrary.HexMap
         
         private int terrainTypeIndex;
         private int specialIndex;
+        private int distance;
+
+        public void DisableHighlight()
+        {
+            Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+            highlight.enabled = false;
+        }
+
+        public void EnableHighlight(Color color)
+        {
+            Image highlight = uiRect.GetChild(0).GetComponent<Image>();
+            highlight.color = color;
+            highlight.enabled = true;
+        }
+
+        public HexCell PathFrom { get; set; }
+
+        public int SearchHeuristic { get; set; }
+
+        public int SearchPriority
+        {
+            get
+            {
+                return distance + SearchHeuristic;
+            }
+        }
+
+        public HexCell NextWithSamePriority { get; set; }
+
+        public int Distance
+        {
+            get
+            {
+                return distance;
+            }
+            set
+            {
+                distance = value;
+                UpdateDistanceLabel();
+            }
+        }
+
+        void UpdateDistanceLabel()
+        {
+            Text label = uiRect.GetComponent<Text>();
+            label.text = distance == int.MaxValue ? "" : distance.ToString();
+        }
 
         public int SpecialIndex
         {
