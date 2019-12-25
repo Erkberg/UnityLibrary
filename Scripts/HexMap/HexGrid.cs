@@ -19,6 +19,8 @@ namespace ErksUnityLibrary.HexMap
 
         public int seed = 1234;
 
+        public HexUnit unitPrefab;
+
         private HexGridChunk[] chunks;
         private HexCell[] cells;
 
@@ -28,10 +30,13 @@ namespace ErksUnityLibrary.HexMap
         private HexCell currentPathFrom, currentPathTo;
         private bool currentPathExists;
 
+        private List<HexUnit> units = new List<HexUnit>();
+
         void Awake()
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
+            HexUnit.unitPrefab = unitPrefab;
 
             CreateMap(cellCountX, cellCountZ);
         }
@@ -42,6 +47,7 @@ namespace ErksUnityLibrary.HexMap
             {
                 HexMetrics.noiseSource = noiseSource;
                 HexMetrics.InitializeHashGrid(seed);
+                HexUnit.unitPrefab = unitPrefab;
             }
         }
 
@@ -54,6 +60,7 @@ namespace ErksUnityLibrary.HexMap
             }
 
             ClearPath();
+            ClearUnits();
 
             if (chunks != null)
             {
@@ -126,6 +133,29 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
+        public void AddUnit(HexUnit unit, HexCell location, float orientation)
+        {
+            units.Add(unit);
+            unit.transform.SetParent(transform, false);
+            unit.Location = location;
+            unit.Orientation = orientation;
+        }
+
+        public void RemoveUnit(HexUnit unit)
+        {
+            units.Remove(unit);
+            unit.Die();
+        }
+
+        private void ClearUnits()
+        {
+            for (int i = 0; i < units.Count; i++)
+            {
+                units[i].Die();
+            }
+            units.Clear();
+        }
+
         public void FindPath(HexCell fromCell, HexCell toCell, int speed)
         {
             ClearPath();
@@ -152,7 +182,15 @@ namespace ErksUnityLibrary.HexMap
             currentPathTo.EnableHighlight(Color.red);
         }
 
-        void ClearPath()
+        public bool HasPath
+        {
+            get
+            {
+                return currentPathExists;
+            }
+        }
+
+        public void ClearPath()
         {
             if (currentPathExists)
             {
@@ -212,7 +250,7 @@ namespace ErksUnityLibrary.HexMap
                     {
                         continue;
                     }
-                    if (neighbor.IsUnderwater)
+                    if (neighbor.IsUnderwater || neighbor.Unit)
                     {
                         continue;
                     }
@@ -338,6 +376,16 @@ namespace ErksUnityLibrary.HexMap
             return cells[index];
         }
 
+        public HexCell GetCell(Ray ray)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                return GetCell(hit.point);
+            }
+            return null;
+        }
+
         public void Save(BinaryWriter writer)
         {
             writer.Write(cellCountX);
@@ -347,11 +395,18 @@ namespace ErksUnityLibrary.HexMap
             {
                 cells[i].Save(writer);
             }
+
+            writer.Write(units.Count);
+            for (int i = 0; i < units.Count; i++)
+            {
+                units[i].Save(writer);
+            }
         }
 
         public void Load(BinaryReader reader, int header)
         {
             ClearPath();
+            ClearUnits();
 
             int x = 20, z = 15;
             if (header >= 1)
@@ -376,6 +431,15 @@ namespace ErksUnityLibrary.HexMap
             for (int i = 0; i < chunks.Length; i++)
             {
                 chunks[i].Refresh();
+            }
+
+            if (header >= 2)
+            {
+                int unitCount = reader.ReadInt32();
+                for (int i = 0; i < unitCount; i++)
+                {
+                    HexUnit.Load(reader, this);
+                }
             }
         }
     }

@@ -30,12 +30,10 @@ namespace ErksUnityLibrary.HexMap
 
         private bool isDrag;
         private HexDirection dragDirection;
-        private HexCell previousCell, searchFromCell, searchToCell;
-
-        private bool editMode;
+        private HexCell previousCell;
 
         private void Awake()
-        {
+        {            
             terrainMaterial.DisableKeyword("GRID_ON");
         }
 
@@ -43,27 +41,39 @@ namespace ErksUnityLibrary.HexMap
         {
             yield return null;
             GenerateRandomMap();
+            SetEditMode(false);
         }
 
         void Update()
         {
-            if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
+            if (!EventSystem.current.IsPointerOverGameObject())
             {
-                HandleInput();
+                if (Input.GetMouseButton(0))
+                {
+                    HandleInput();
+                    return;
+                }
+                if (Input.GetKeyDown(KeyCode.U))
+                {
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        DestroyUnit();
+                    }
+                    else
+                    {
+                        CreateUnit();
+                    }
+                    return;
+                }
             }
-            else
-            {
-                previousCell = null;
-            }
+            previousCell = null;
         }
 
         void HandleInput()
         {
-            Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(inputRay, out hit))
+            HexCell currentCell = GetCellUnderCursor();
+            if (currentCell)
             {
-                HexCell currentCell = hexGrid.GetCell(hit.point);
                 if (previousCell && previousCell != currentCell)
                 {
                     ValidateDrag(currentCell);
@@ -73,36 +83,7 @@ namespace ErksUnityLibrary.HexMap
                     isDrag = false;
                 }
 
-                if(editMode)
-                {
-                    EditCells(currentCell);
-                }
-                else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
-                {
-                    if (searchFromCell != currentCell)
-                    {
-                        if (searchFromCell)
-                        {
-                            searchFromCell.DisableHighlight();
-                        }
-                        searchFromCell = currentCell;
-                        searchFromCell.EnableHighlight(Color.blue);
-
-                        if (searchToCell)
-                        {
-                            hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                        }
-                    }
-                }
-                else if (searchFromCell && searchFromCell != currentCell)
-                {
-                    if (searchToCell != currentCell)
-                    {
-                        searchToCell = currentCell;
-                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
-                    }                        
-                }
-
+                EditCells(currentCell);
                 previousCell = currentCell;
             }
             else
@@ -122,6 +103,29 @@ namespace ErksUnityLibrary.HexMap
                 }
             }
             isDrag = false;
+        }
+
+        private HexCell GetCellUnderCursor()
+        {
+            return hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+        }
+
+        private void CreateUnit()
+        {
+            HexCell cell = GetCellUnderCursor();
+            if (cell && !cell.Unit)
+            {
+                hexGrid.AddUnit(Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f));
+            }
+        }
+
+        private void DestroyUnit()
+        {
+            HexCell cell = GetCellUnderCursor();
+            if (cell && cell.Unit)
+            {
+                hexGrid.RemoveUnit(cell.Unit);
+            }
         }
 
         public void SetElevation(float elevation)
@@ -314,8 +318,7 @@ namespace ErksUnityLibrary.HexMap
 
         public void SetEditMode(bool toggle)
         {
-            editMode = toggle;
-            hexGrid.ShowUI(!toggle);
+            enabled = toggle;
         }
 
         private void GenerateRandomMap()

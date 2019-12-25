@@ -63,6 +63,8 @@ namespace ErksUnityLibrary.HexMap
             label.text = text;
         }
 
+        public HexUnit Unit { get; set; }
+
         public int SpecialIndex
         {
             get
@@ -189,6 +191,11 @@ namespace ErksUnityLibrary.HexMap
                     }
                 }
             }
+
+            if (Unit)
+            {
+                Unit.ValidateLocation();
+            }
         }
 
         private void RefreshPosition()
@@ -208,6 +215,11 @@ namespace ErksUnityLibrary.HexMap
             if(chunk)
             {
                 chunk.Refresh();
+            }
+
+            if (Unit)
+            {
+                Unit.ValidateLocation();
             }
         }
 
