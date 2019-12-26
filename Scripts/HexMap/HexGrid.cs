@@ -32,12 +32,14 @@ namespace ErksUnityLibrary.HexMap
 
         private List<HexUnit> units = new List<HexUnit>();
 
+        private HexCellShaderData cellShaderData;
+
         void Awake()
         {
             HexMetrics.noiseSource = noiseSource;
             HexMetrics.InitializeHashGrid(seed);
             HexUnit.unitPrefab = unitPrefab;
-
+            cellShaderData = gameObject.AddComponent<HexCellShaderData>();
             CreateMap(cellCountX, cellCountZ);
         }
 
@@ -75,6 +77,7 @@ namespace ErksUnityLibrary.HexMap
             chunkCountX = cellCountX / HexMetrics.chunkSizeX;
             chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
+            cellShaderData.Initialize(cellCountX, cellCountZ);
             CreateChunks();
             CreateCells();
 
@@ -136,6 +139,7 @@ namespace ErksUnityLibrary.HexMap
         public void AddUnit(HexUnit unit, HexCell location, float orientation)
         {
             units.Add(unit);
+            unit.Grid = this;
             unit.transform.SetParent(transform, false);
             unit.Location = location;
             unit.Orientation = orientation;
@@ -321,6 +325,81 @@ namespace ErksUnityLibrary.HexMap
             return false;
         }
 
+        private List<HexCell> GetVisibleCells(HexCell fromCell, int range)
+        {
+            List<HexCell> visibleCells = ListPool<HexCell>.Get();
+
+            searchFrontierPhase += 2;
+            if (searchFrontier == null)
+            {
+                searchFrontier = new HexCellPriorityQueue();
+            }
+            else
+            {
+                searchFrontier.Clear();
+            }
+
+            fromCell.SearchPhase = searchFrontierPhase;
+            fromCell.Distance = 0;
+            searchFrontier.Enqueue(fromCell);
+            while (searchFrontier.Count > 0)
+            {
+                HexCell current = searchFrontier.Dequeue();
+                current.SearchPhase += 1;
+                visibleCells.Add(current);
+
+                for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+                {
+                    HexCell neighbor = current.GetNeighbor(d);
+                    if (neighbor == null || neighbor.SearchPhase > searchFrontierPhase)
+                    {
+                        continue;
+                    }
+
+                    int distance = current.Distance + 1;
+                    if (distance > range)
+                    {
+                        continue;
+                    }
+
+                    if (neighbor.SearchPhase < searchFrontierPhase)
+                    {
+                        neighbor.SearchPhase = searchFrontierPhase;
+                        neighbor.Distance = distance;
+                        neighbor.SearchHeuristic = 0;
+                        searchFrontier.Enqueue(neighbor);
+                    }
+                    else if (distance < neighbor.Distance)
+                    {
+                        int oldPriority = neighbor.SearchPriority;
+                        neighbor.Distance = distance;
+                        searchFrontier.Change(neighbor, oldPriority);
+                    }
+                }
+            }
+            return visibleCells;
+        }
+
+        public void IncreaseVisibility(HexCell fromCell, int range)
+        {
+            List<HexCell> cells = GetVisibleCells(fromCell, range);
+            for (int i = 0; i < cells.Count; i++)
+            {
+                cells[i].IncreaseVisibility();
+            }
+            ListPool<HexCell>.Add(cells);
+        }
+
+        public void DecreaseVisibility(HexCell fromCell, int range)
+        {
+            List<HexCell> cells = GetVisibleCells(fromCell, range);
+            for (int i = 0; i < cells.Count; i++)
+            {
+                cells[i].DecreaseVisibility();
+            }
+            ListPool<HexCell>.Add(cells);
+        }
+
         private void CreateCell(int x, int z, int i)
         {
             // Position
@@ -333,6 +412,8 @@ namespace ErksUnityLibrary.HexMap
             HexCell cell = cells[i] = Instantiate(cellPrefab);
             cell.transform.localPosition = position;
             cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+            cell.Index = i;
+            cell.ShaderData = cellShaderData;
             cell.TerrainTypeIndex = 0;
             cell.name = "HexCell - " + cell.coordinates.ToString();
 

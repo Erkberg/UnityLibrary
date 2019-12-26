@@ -11,10 +11,40 @@ namespace ErksUnityLibrary.HexMap
         public HexCoordinates coordinates;        
         public RectTransform uiRect;
         public HexGridChunk chunk;
-        
+        public HexCellShaderData ShaderData { get; set; }
+        public int Index { get; set; }
+
         private int terrainTypeIndex;
         private int specialIndex;
         private int distance;
+
+        public bool IsVisible
+        {
+            get
+            {
+                return visibility > 0;
+            }
+        }
+
+	    private int visibility;
+
+        public void IncreaseVisibility()
+        {
+            visibility += 1;
+            if (visibility == 1)
+            {
+                ShaderData.RefreshVisibility(this);
+            }
+        }
+
+        public void DecreaseVisibility()
+        {
+            visibility -= 1;
+            if (visibility == 0)
+            {
+                ShaderData.RefreshVisibility(this);
+            }
+        }
 
         public void DisableHighlight()
         {
@@ -100,7 +130,7 @@ namespace ErksUnityLibrary.HexMap
                 if (terrainTypeIndex != value)
                 {
                     terrainTypeIndex = value;
-                    Refresh();
+                    ShaderData.RefreshTerrain(this);
                 }
             }
         }
@@ -594,6 +624,7 @@ namespace ErksUnityLibrary.HexMap
         public void Load(BinaryReader reader)
         {
             terrainTypeIndex = reader.ReadInt32();
+            ShaderData.RefreshTerrain(this);
             elevation = reader.ReadInt32();
             RefreshPosition();
             waterLevel = reader.ReadInt32();

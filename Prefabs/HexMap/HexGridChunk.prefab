@@ -127,10 +127,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 8913125813713083708}
   useCollider: 0
-  useColors: 0
+  useCellData: 1
   useUVCoordinates: 1
   useUV2Coordinates: 1
-  useTerrainTypes: 0
 --- !u!33 &8913125813713083708
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -284,10 +283,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 4844788738579589824}
   useCollider: 1
-  useColors: 1
+  useCellData: 1
   useUVCoordinates: 0
   useUV2Coordinates: 0
-  useTerrainTypes: 1
 --- !u!33 &4844788738579589824
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -381,10 +379,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 5588998416469571839}
   useCollider: 0
-  useColors: 0
+  useCellData: 1
   useUVCoordinates: 1
   useUV2Coordinates: 0
-  useTerrainTypes: 0
 --- !u!33 &5588998416469571839
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -562,10 +559,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 7998844367863706308}
   useCollider: 0
-  useColors: 0
+  useCellData: 1
   useUVCoordinates: 0
   useUV2Coordinates: 0
-  useTerrainTypes: 0
 --- !u!33 &7998844367863706308
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -659,10 +655,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 3334961591612958489}
   useCollider: 0
-  useColors: 0
+  useCellData: 1
   useUVCoordinates: 1
   useUV2Coordinates: 0
-  useTerrainTypes: 0
 --- !u!33 &3334961591612958489
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -756,10 +751,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 6621569169007946236}
   useCollider: 0
-  useColors: 0
+  useCellData: 1
   useUVCoordinates: 1
   useUV2Coordinates: 0
-  useTerrainTypes: 0
 --- !u!33 &6621569169007946236
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -853,10 +847,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 1525856330687915996}
   useCollider: 0
-  useColors: 0
+  useCellData: 0
   useUVCoordinates: 0
   useUV2Coordinates: 0
-  useTerrainTypes: 0
 --- !u!33 &1525856330687915996
 MeshFilter:
   m_ObjectHideFlags: 0
