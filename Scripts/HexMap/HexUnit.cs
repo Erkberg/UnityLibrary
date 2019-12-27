@@ -51,6 +51,14 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
+        public int Speed
+        {
+            get
+            {
+                return 24;
+            }
+        }
+
         private float orientation;
 
         public void ValidateLocation()
@@ -60,7 +68,7 @@ namespace ErksUnityLibrary.HexMap
 
         public bool IsValidDestination(HexCell cell)
         {
-            return !cell.IsUnderwater && !cell.Unit;
+            return cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
         }
 
         public void Travel(List<HexCell> path)
@@ -124,6 +132,30 @@ namespace ErksUnityLibrary.HexMap
 
             ListPool<HexCell>.Add(pathToTravel);
             pathToTravel = null;
+        }
+
+        public int GetMoveCost(HexCell fromCell, HexCell toCell, HexDirection direction)
+        {
+            HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+            if (edgeType == HexEdgeType.Cliff)
+            {
+                return -1;
+            }
+            int moveCost;
+            if (fromCell.HasRoadThroughEdge(direction))
+            {
+                moveCost = 1;
+            }
+            else if (fromCell.Walled != toCell.Walled)
+            {
+                return -1;
+            }
+            else
+            {
+                moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+            }
+
+            return moveCost;
         }
 
         private void OnEnable()

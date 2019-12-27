@@ -18,6 +18,8 @@ namespace ErksUnityLibrary.HexMap
         private int specialIndex;
         private int distance;
 
+        public bool IsExplored { get; private set; }
+
         public bool IsVisible
         {
             get
@@ -33,6 +35,7 @@ namespace ErksUnityLibrary.HexMap
             visibility += 1;
             if (visibility == 1)
             {
+                IsExplored = true;
                 ShaderData.RefreshVisibility(this);
             }
         }
@@ -619,9 +622,10 @@ namespace ErksUnityLibrary.HexMap
                 }
             }
             writer.Write((byte)roadFlags);
+            writer.Write(IsExplored);
         }
 
-        public void Load(BinaryReader reader)
+        public void Load(BinaryReader reader, int header)
         {
             terrainTypeIndex = reader.ReadInt32();
             ShaderData.RefreshTerrain(this);
@@ -661,6 +665,9 @@ namespace ErksUnityLibrary.HexMap
             {
                 roads[i] = (roadFlags & (1 << i)) != 0;
             }
+
+            IsExplored = header >= 3 ? reader.ReadBoolean() : false;
+            ShaderData.RefreshVisibility(this);
         }
     }
 }

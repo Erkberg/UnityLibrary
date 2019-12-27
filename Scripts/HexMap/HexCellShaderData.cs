@@ -48,7 +48,9 @@ namespace ErksUnityLibrary.HexMap
 
         public void RefreshVisibility(HexCell cell)
         {
-            cellTextureData[cell.Index].r = cell.IsVisible ? (byte)255 : (byte)0;
+            int index = cell.Index;
+            cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
+            cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
             enabled = true;
         }
 

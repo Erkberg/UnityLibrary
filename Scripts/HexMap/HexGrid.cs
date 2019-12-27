@@ -160,13 +160,13 @@ namespace ErksUnityLibrary.HexMap
             units.Clear();
         }
 
-        public void FindPath(HexCell fromCell, HexCell toCell, int speed)
+        public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
         {
             ClearPath();
             currentPathFrom = fromCell;
             currentPathTo = toCell;
-            currentPathExists = Search(fromCell, toCell, speed);
-            ShowPath(speed);
+            currentPathExists = Search(fromCell, toCell, unit);
+            ShowPath(unit.Speed);
         }
 
         private void ShowPath(int speed)
@@ -232,7 +232,7 @@ namespace ErksUnityLibrary.HexMap
             currentPathFrom = currentPathTo = null;
         }
 
-        private bool Search(HexCell fromCell, HexCell toCell, int speed)
+        private bool Search(HexCell fromCell, HexCell toCell, HexUnit unit)
         {
             searchFrontierPhase += 2;
 
@@ -259,7 +259,7 @@ namespace ErksUnityLibrary.HexMap
                     return true;
                 }
 
-                int currentTurn = (current.Distance - 1) / speed;
+                int currentTurn = (current.Distance - 1) / unit.Speed;
 
                 for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
                 {
@@ -270,37 +270,24 @@ namespace ErksUnityLibrary.HexMap
                     {
                         continue;
                     }
-                    if (neighbor.IsUnderwater || neighbor.Unit)
-                    {
-                        continue;
-                    }
-                    HexEdgeType edgeType = current.GetEdgeType(neighbor);
-                    if (edgeType == HexEdgeType.Cliff)
-                    {
-                        continue;
-                    }
-                    if (current.Walled != neighbor.Walled)
-                    {
-                        continue;
-                    }
 
                     // Move cost
-                    int moveCost = 0;
-                    if (current.HasRoadThroughEdge(d))
+                    if (!unit.IsValidDestination(neighbor))
                     {
-                        moveCost = 1;
+                        continue;
                     }
-                    else
+                    int moveCost = unit.GetMoveCost(current, neighbor, d);
+                    if (moveCost < 0)
                     {
-                        moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+                        continue;
                     }
 
                     // Turns
                     int distance = current.Distance + moveCost;
-                    int turn = (distance - 1) / speed;
+                    int turn = (distance - 1) / unit.Speed;
                     if (turn > currentTurn)
                     {
-                        distance = turn * speed + moveCost;
+                        distance = turn * unit.Speed + moveCost;
                     }
 
                     // Update neighbor / frontier
@@ -522,7 +509,7 @@ namespace ErksUnityLibrary.HexMap
 
             for (int i = 0; i < cells.Length; i++)
             {
-                cells[i].Load(reader);
+                cells[i].Load(reader, header);
             }
 
             for (int i = 0; i < chunks.Length; i++)
