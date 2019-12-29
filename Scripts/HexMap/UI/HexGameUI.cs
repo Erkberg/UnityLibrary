@@ -13,6 +13,11 @@ namespace ErksUnityLibrary.HexMap
         private HexCell currentCell;
         private HexUnit selectedUnit;
 
+        private void Awake()
+        {
+            SetEditMode(true);
+        }
+
         private void Update()
         {
             if (!EventSystem.current.IsPointerOverGameObject())

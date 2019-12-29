@@ -491,6 +491,16 @@ namespace ErksUnityLibrary.HexMap
             return null;
         }
 
+        public HexCell GetCell(int xOffset, int zOffset)
+        {
+            return cells[xOffset + zOffset * cellCountX];
+        }
+
+        public HexCell GetCell(int cellIndex)
+        {
+            return cells[cellIndex];
+        }
+
         public void Save(BinaryWriter writer)
         {
             writer.Write(cellCountX);

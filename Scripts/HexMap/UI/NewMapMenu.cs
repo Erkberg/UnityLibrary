@@ -7,6 +7,9 @@ namespace ErksUnityLibrary.HexMap
     public class NewMapMenu : MonoBehaviour
     {
         public HexGrid hexGrid;
+        public HexMapGenerator mapGenerator;
+
+        private bool generateMaps = true;
 
         public void Open()
         {
@@ -22,7 +25,15 @@ namespace ErksUnityLibrary.HexMap
 
         private void CreateMap(int x, int z)
         {
-            hexGrid.CreateMap(x, z);
+            if (generateMaps)
+            {
+                mapGenerator.GenerateMap(x, z);
+            }
+            else
+            {
+                hexGrid.CreateMap(x, z);
+            }
+
             HexMapCamera.ValidatePosition();
             Close();
         }
@@ -40,6 +51,11 @@ namespace ErksUnityLibrary.HexMap
         public void CreateLargeMap()
         {
             CreateMap(80, 60);
+        }
+
+        public void ToggleMapGeneration(bool toggle)
+        {
+            generateMaps = toggle;
         }
     }
 }

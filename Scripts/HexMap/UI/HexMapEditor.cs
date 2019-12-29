@@ -35,13 +35,8 @@ namespace ErksUnityLibrary.HexMap
         private void Awake()
         {            
             terrainMaterial.DisableKeyword("GRID_ON");
-        }
-
-        private IEnumerator Start()
-        {
-            yield return null;
-            GenerateRandomMap();
-            SetEditMode(false);
+            Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+            SetEditMode(true);
         }
 
         void Update()
@@ -319,23 +314,6 @@ namespace ErksUnityLibrary.HexMap
         public void SetEditMode(bool toggle)
         {
             enabled = toggle;
-        }
-
-        private void GenerateRandomMap()
-        {
-            foreach(HexCell cell in FindObjectsOfType<HexCell>())
-            {
-                cell.Elevation = Random.Range(0, 4);
-                cell.TerrainTypeIndex = cell.Elevation;
-                cell.WaterLevel = 1;
-
-                cell.UrbanLevel = Random.Range(-16, 4);
-                cell.FarmLevel = Random.Range(-16, 4);
-                cell.PlantLevel = Random.Range(-16, 4);
-                cell.SpecialIndex = Random.Range(-32, 4);
-
-                cell.Walled = Random.Range(0f, 1f) < 0.1f;
-            }
         }
 
         public void SetTerrainTypeIndex(int index)
