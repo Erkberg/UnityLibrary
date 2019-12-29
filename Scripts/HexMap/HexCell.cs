@@ -12,19 +12,31 @@ namespace ErksUnityLibrary.HexMap
         public RectTransform uiRect;
         public HexGridChunk chunk;
         public HexCellShaderData ShaderData { get; set; }
+        public bool Explorable { get; set; }
         public int Index { get; set; }
 
         private int terrainTypeIndex;
         private int specialIndex;
         private int distance;
 
-        public bool IsExplored { get; private set; }
+        private bool explored;
+        public bool IsExplored
+        {
+            get
+            {
+                return explored && Explorable;
+            }
+            private set
+            {
+                explored = value;
+            }
+        }
 
         public bool IsVisible
         {
             get
             {
-                return visibility > 0;
+                return visibility > 0 && Explorable;
             }
         }
 
@@ -152,7 +164,13 @@ namespace ErksUnityLibrary.HexMap
                     return;
                 }
 
+                int originalViewElevation = ViewElevation;
                 elevation = value;
+                if (ViewElevation != originalViewElevation)
+                {
+                    ShaderData.ViewElevationChanged();
+                }
+
                 RefreshPosition();
                 ValidateRivers();
 
@@ -166,6 +184,14 @@ namespace ErksUnityLibrary.HexMap
                 }
 
                 Refresh();
+            }
+        }
+
+        public int ViewElevation
+        {
+            get
+            {
+                return elevation >= waterLevel ? elevation : waterLevel;
             }
         }
 
@@ -253,6 +279,15 @@ namespace ErksUnityLibrary.HexMap
             if (Unit)
             {
                 Unit.ValidateLocation();
+            }
+        }
+
+        public void ResetVisibility()
+        {
+            if (visibility > 0)
+            {
+                visibility = 0;
+                ShaderData.RefreshVisibility(this);
             }
         }
 
@@ -394,7 +429,14 @@ namespace ErksUnityLibrary.HexMap
                 {
                     return;
                 }
+
+                int originalViewElevation = ViewElevation;
                 waterLevel = value;
+                if (ViewElevation != originalViewElevation)
+                {
+                    ShaderData.ViewElevationChanged();
+                }
+
                 ValidateRivers();
                 Refresh();
             }
@@ -585,6 +627,7 @@ namespace ErksUnityLibrary.HexMap
         }
         #endregion rivers
 
+        #region save / load
         public void Save(BinaryWriter writer)
         {
             writer.Write(terrainTypeIndex);
@@ -669,5 +712,6 @@ namespace ErksUnityLibrary.HexMap
             IsExplored = header >= 3 ? reader.ReadBoolean() : false;
             ShaderData.RefreshVisibility(this);
         }
+        #endregion save / load
     }
 }
