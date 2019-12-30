@@ -713,5 +713,10 @@ namespace ErksUnityLibrary.HexMap
             ShaderData.RefreshVisibility(this);
         }
         #endregion save / load
+
+        public void SetMapData(float data)
+        {
+            ShaderData.SetMapData(this, data);
+        }
     }
 }
