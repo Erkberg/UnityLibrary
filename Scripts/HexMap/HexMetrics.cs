@@ -9,7 +9,8 @@ namespace ErksUnityLibrary.HexMap
         public const float outerToInner = 0.866025404f;
         public const float innerToOuter = 1f / outerToInner;
         public const float outerRadius = 1f;
-        public const float innerRadius = outerRadius * outerToInner;        
+        public const float innerRadius = outerRadius * outerToInner;
+        public const float innerDiameter = innerRadius * 2f;
 
         public const float solidFactor = 0.8f;
         public const float blendFactor = 1f - solidFactor;
@@ -74,6 +75,16 @@ namespace ErksUnityLibrary.HexMap
         public static float[] GetFeatureThresholds(int level)
         {
             return featureThresholds[level];
+        }
+
+        public static int wrapSize;
+
+        public static bool Wrapping
+        {
+            get
+            {
+                return wrapSize > 0;
+            }
         }
 
         public static void InitializeHashGrid(int seed)
@@ -200,7 +211,15 @@ namespace ErksUnityLibrary.HexMap
 
         public static Vector4 SampleNoise(Vector3 position)
         {
-            return noiseSource.GetPixelBilinear(position.x * noiseScale, position.z * noiseScale);
+            Vector4 sample = noiseSource.GetPixelBilinear(position.x * noiseScale,position.z * noiseScale);
+
+            if (Wrapping && position.x < innerDiameter * 1.5f)
+            {
+                Vector4 sample2 = noiseSource.GetPixelBilinear((position.x + wrapSize * innerDiameter) * noiseScale, position.z * noiseScale);
+                sample = Vector4.Lerp(sample2, sample, position.x * (1f / innerDiameter) - 0.5f);
+            }
+
+            return sample;
         }
     }
 

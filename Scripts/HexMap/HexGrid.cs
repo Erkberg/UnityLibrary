@@ -21,6 +21,8 @@ namespace ErksUnityLibrary.HexMap
 
         public HexUnit unitPrefab;
 
+        public bool wrapping;
+
         private HexGridChunk[] chunks;
         private HexCell[] cells;
 
@@ -34,6 +36,9 @@ namespace ErksUnityLibrary.HexMap
 
         private HexCellShaderData cellShaderData;
 
+        private Transform[] columns;
+        private int currentCenterColumnIndex = -1;
+
         void Awake()
         {
             HexMetrics.noiseSource = noiseSource;
@@ -41,7 +46,7 @@ namespace ErksUnityLibrary.HexMap
             HexUnit.unitPrefab = unitPrefab;
             cellShaderData = gameObject.AddComponent<HexCellShaderData>();
             cellShaderData.Grid = this;
-            CreateMap(cellCountX, cellCountZ);
+            CreateMap(cellCountX, cellCountZ, wrapping);
         }
 
         void OnEnable()
@@ -51,11 +56,12 @@ namespace ErksUnityLibrary.HexMap
                 HexMetrics.noiseSource = noiseSource;
                 HexMetrics.InitializeHashGrid(seed);
                 HexUnit.unitPrefab = unitPrefab;
+                HexMetrics.wrapSize = wrapping ? cellCountX : 0;
                 ResetVisibility();
             }
         }
 
-        public bool CreateMap(int x, int z)
+        public bool CreateMap(int x, int z, bool wrapping)
         {
             if (x <= 0 || x % HexMetrics.chunkSizeX != 0 || z <= 0 || z % HexMetrics.chunkSizeZ != 0)
             {
@@ -66,16 +72,19 @@ namespace ErksUnityLibrary.HexMap
             ClearPath();
             ClearUnits();
 
-            if (chunks != null)
+            if (columns != null)
             {
-                for (int i = 0; i < chunks.Length; i++)
+                for (int i = 0; i < columns.Length; i++)
                 {
-                    Destroy(chunks[i].gameObject);
+                    Destroy(columns[i].gameObject);
                 }
             }
 
             cellCountX = x;
             cellCountZ = z;
+            this.wrapping = wrapping;
+            currentCenterColumnIndex = -1;
+            HexMetrics.wrapSize = wrapping ? cellCountX : 0;
             chunkCountX = cellCountX / HexMetrics.chunkSizeX;
             chunkCountZ = cellCountZ / HexMetrics.chunkSizeZ;
 
@@ -113,6 +122,13 @@ namespace ErksUnityLibrary.HexMap
 
         private void CreateChunks()
         {
+            columns = new Transform[chunkCountX];
+            for (int x = 0; x < chunkCountX; x++)
+            {
+                columns[x] = new GameObject("Column").transform;
+                columns[x].SetParent(transform, false);
+            }
+
             chunks = new HexGridChunk[chunkCountX * chunkCountZ];
 
             for (int z = 0, i = 0; z < chunkCountZ; z++)
@@ -120,7 +136,7 @@ namespace ErksUnityLibrary.HexMap
                 for (int x = 0; x < chunkCountX; x++)
                 {
                     HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
-                    chunk.transform.SetParent(transform);
+                    chunk.transform.SetParent(columns[x], false);
                 }
             }
         }
@@ -138,11 +154,165 @@ namespace ErksUnityLibrary.HexMap
             }
         }
 
+        private void CreateCell(int x, int z, int i)
+        {
+            // Position
+            Vector3 position;
+            position.x = (x + z * 0.5f - z / 2) * HexMetrics.innerDiameter;
+            position.y = 0f;
+            position.z = z * (HexMetrics.outerRadius * 1.5f);
+
+            // Cell
+            HexCell cell = cells[i] = Instantiate(cellPrefab);
+            cell.transform.localPosition = position;
+            cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+            cell.Index = i;
+            cell.ColumnIndex = x / HexMetrics.chunkSizeX;
+            cell.ShaderData = cellShaderData;
+            if (wrapping)
+            {
+                cell.Explorable = z > 0 && z < cellCountZ - 1;
+            }
+            else
+            {
+                cell.Explorable = x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
+            }
+            cell.TerrainTypeIndex = 0;
+            cell.name = "HexCell - " + cell.coordinates.ToString();
+
+            // Neighbors
+            if (x > 0)
+            {
+                cell.SetNeighbor(HexDirection.W, cells[i - 1]);
+                if (wrapping && x == cellCountX - 1)
+                {
+                    cell.SetNeighbor(HexDirection.E, cells[i - x]);
+                }
+            }
+
+            if (z > 0)
+            {
+                if ((z & 1) == 0)
+                {
+                    cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX]);
+                    if (x > 0)
+                    {
+                        cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX - 1]);
+                    }
+                    else if (wrapping)
+                    {
+                        cell.SetNeighbor(HexDirection.SW, cells[i - 1]);
+                    }
+                }
+                else
+                {
+                    cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX]);
+                    if (x < cellCountX - 1)
+                    {
+                        cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX + 1]);
+                    }
+                    else if (wrapping)
+                    {
+                        cell.SetNeighbor(
+                            HexDirection.SE, cells[i - cellCountX * 2 + 1]
+                        );
+                    }
+                }
+            }
+
+            // Coord UI
+            Text label = Instantiate(cellLabelPrefab);
+            label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
+            //label.text = cell.coordinates.ToStringOnSeparateLines();
+            cell.uiRect = label.rectTransform;
+
+            cell.Elevation = 0;
+
+            AddCellToChunk(x, z, cell);
+        }
+
+        private void AddCellToChunk(int x, int z, HexCell cell)
+        {
+            int chunkX = x / HexMetrics.chunkSizeX;
+            int chunkZ = z / HexMetrics.chunkSizeZ;
+            HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
+
+            int localX = x - chunkX * HexMetrics.chunkSizeX;
+            int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
+            chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+        }
+
+        public HexCell GetCell(Vector3 position)
+        {
+            position = transform.InverseTransformPoint(position);
+            HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+            return GetCell(coordinates);
+        }
+
+        public HexCell GetCell(Ray ray)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                return GetCell(hit.point);
+            }
+            return null;
+        }
+
+        public HexCell GetCell(int xOffset, int zOffset)
+        {
+            return cells[xOffset + zOffset * cellCountX];
+        }
+
+        public HexCell GetCell(int cellIndex)
+        {
+            return cells[cellIndex];
+        }
+
+        public void CenterMap(float xPosition)
+        {
+            int centerColumnIndex = (int) (xPosition / (HexMetrics.innerDiameter * HexMetrics.chunkSizeX));
+            if (centerColumnIndex == currentCenterColumnIndex)
+            {
+                return;
+            }
+            currentCenterColumnIndex = centerColumnIndex;
+
+            int minColumnIndex = centerColumnIndex - chunkCountX / 2;
+            int maxColumnIndex = centerColumnIndex + chunkCountX / 2;
+
+            Vector3 position;
+            position.y = position.z = 0f;
+            for (int i = 0; i < columns.Length; i++)
+            {
+                if (i < minColumnIndex)
+                {
+                    position.x = chunkCountX *
+                        (HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
+                }
+                else if (i > maxColumnIndex)
+                {
+                    position.x = chunkCountX *
+                        -(HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
+                }
+                else
+                {
+                    position.x = 0f;
+                }
+                columns[i].localPosition = position;
+            }
+        }
+
+        public void MakeChildOfColumn(Transform child, int columnIndex)
+        {
+            child.SetParent(columns[columnIndex], false);
+        }
+
+        #region units
         public void AddUnit(HexUnit unit, HexCell location, float orientation)
         {
             units.Add(unit);
             unit.Grid = this;
-            unit.transform.SetParent(transform, false);
             unit.Location = location;
             unit.Orientation = orientation;
         }
@@ -161,7 +331,9 @@ namespace ErksUnityLibrary.HexMap
             }
             units.Clear();
         }
+        #endregion units
 
+        #region paths
         public void FindPath(HexCell fromCell, HexCell toCell, HexUnit unit)
         {
             ClearPath();
@@ -313,6 +485,7 @@ namespace ErksUnityLibrary.HexMap
 
             return false;
         }
+        #endregion paths
 
         #region visibility
         private List<HexCell> GetVisibleCells(HexCell fromCell, int range)
@@ -405,106 +578,14 @@ namespace ErksUnityLibrary.HexMap
                 IncreaseVisibility(unit.Location, unit.VisionRange);
             }
         }
-        #endregion visibility
+        #endregion visibility        
 
-        private void CreateCell(int x, int z, int i)
-        {
-            // Position
-            Vector3 position;
-            position.x = (x + z * 0.5f - z / 2) * (HexMetrics.innerRadius * 2f);
-            position.y = 0f;
-            position.z = z * (HexMetrics.outerRadius * 1.5f);
-
-            // Cell
-            HexCell cell = cells[i] = Instantiate(cellPrefab);
-            cell.transform.localPosition = position;
-            cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-            cell.Index = i;
-            cell.ShaderData = cellShaderData;
-            cell.Explorable = x > 0 && z > 0 && x < cellCountX - 1 && z < cellCountZ - 1;
-            cell.TerrainTypeIndex = 0;
-            cell.name = "HexCell - " + cell.coordinates.ToString();
-
-            // Neighbors
-            if (x > 0)
-            {
-                cell.SetNeighbor(HexDirection.W, cells[i - 1]);
-            }
-
-            if (z > 0)
-            {
-                if ((z & 1) == 0)
-                {
-                    cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX]);
-                    if (x > 0)
-                    {
-                        cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX - 1]);
-                    }
-                }
-                else
-                {
-                    cell.SetNeighbor(HexDirection.SW, cells[i - cellCountX]);
-                    if (x < cellCountX - 1)
-                    {
-                        cell.SetNeighbor(HexDirection.SE, cells[i - cellCountX + 1]);
-                    }
-                }
-            }
-
-            // Coord UI
-            Text label = Instantiate(cellLabelPrefab);
-            label.rectTransform.anchoredPosition = new Vector2(position.x, position.z);
-            //label.text = cell.coordinates.ToStringOnSeparateLines();
-            cell.uiRect = label.rectTransform;
-
-            cell.Elevation = 0;
-
-            AddCellToChunk(x, z, cell);
-        }
-
-        private void AddCellToChunk(int x, int z, HexCell cell)
-        {
-            int chunkX = x / HexMetrics.chunkSizeX;
-            int chunkZ = z / HexMetrics.chunkSizeZ;
-            HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
-
-            int localX = x - chunkX * HexMetrics.chunkSizeX;
-            int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
-            chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
-        }
-
-        public HexCell GetCell(Vector3 position)
-        {
-            position = transform.InverseTransformPoint(position);
-            HexCoordinates coordinates = HexCoordinates.FromPosition(position);
-            int index = coordinates.X + coordinates.Z * cellCountX + coordinates.Z / 2;
-            return cells[index];
-        }
-
-        public HexCell GetCell(Ray ray)
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                return GetCell(hit.point);
-            }
-            return null;
-        }
-
-        public HexCell GetCell(int xOffset, int zOffset)
-        {
-            return cells[xOffset + zOffset * cellCountX];
-        }
-
-        public HexCell GetCell(int cellIndex)
-        {
-            return cells[cellIndex];
-        }
-
+        #region save / load
         public void Save(BinaryWriter writer)
         {
             writer.Write(cellCountX);
             writer.Write(cellCountZ);
+            writer.Write(wrapping);
 
             for (int i = 0; i < cells.Length; i++)
             {
@@ -530,9 +611,10 @@ namespace ErksUnityLibrary.HexMap
                 z = reader.ReadInt32();
             }
 
-            if (x != cellCountX || z != cellCountZ)
+            bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
+            if (x != cellCountX || z != cellCountZ || this.wrapping != wrapping)
             {
-                if (!CreateMap(x, z))
+                if (!CreateMap(x, z, wrapping))
                 {
                     return;
                 }
@@ -562,5 +644,6 @@ namespace ErksUnityLibrary.HexMap
 
             cellShaderData.ImmediateMode = originalImmediateMode;
         }
+        #endregion save / load
     }
 }

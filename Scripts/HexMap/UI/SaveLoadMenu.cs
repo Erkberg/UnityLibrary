@@ -9,7 +9,7 @@ namespace ErksUnityLibrary.HexMap
 {
     public class SaveLoadMenu : MonoBehaviour
     {
-        private const int mapFileVersion = 3;
+        private const int mapFileVersion = 5;
 
         public HexGrid hexGrid;
         public Text menuLabel, actionButtonLabel;

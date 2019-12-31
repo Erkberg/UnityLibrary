@@ -24,6 +24,8 @@
 		#pragma multi_compile _ GRID_ON
 		#pragma multi_compile _ HEX_MAP_EDIT_MODE
 		#pragma shader_feature SHOW_MAP_DATA
+
+		#include "HexMetrics.cginc"
 		#include "HexCellData.cginc"
 
 		UNITY_DECLARE_TEX2DARRAY(_MainTex);
@@ -77,7 +79,7 @@
 
 		float4 GetTerrainColor(Input IN, int index) 
 		{
-			float3 uvw = float3(IN.worldPos.xz * 0.2, IN.terrain[index]);
+			float3 uvw = float3(IN.worldPos.xz * (20 * TILING_SCALE), IN.terrain[index]);
 			float4 c = UNITY_SAMPLE_TEX2DARRAY(_MainTex, uvw);
 			return c * (IN.color[index] * IN.visibility[index]);
 		}

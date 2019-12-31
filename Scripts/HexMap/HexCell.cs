@@ -19,6 +19,8 @@ namespace ErksUnityLibrary.HexMap
         private int specialIndex;
         private int distance;
 
+        public int ColumnIndex { get; set; }
+
         private bool explored;
         public bool IsExplored
         {

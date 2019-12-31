@@ -10,6 +10,7 @@ namespace ErksUnityLibrary.HexMap
         public HexMapGenerator mapGenerator;
 
         private bool generateMaps = true;
+        private bool wrapping = true;
 
         public void Open()
         {
@@ -27,11 +28,11 @@ namespace ErksUnityLibrary.HexMap
         {
             if (generateMaps)
             {
-                mapGenerator.GenerateMap(x, z);
+                mapGenerator.GenerateMap(x, z, wrapping);
             }
             else
             {
-                hexGrid.CreateMap(x, z);
+                hexGrid.CreateMap(x, z, wrapping);
             }
 
             HexMapCamera.ValidatePosition();
@@ -56,6 +57,11 @@ namespace ErksUnityLibrary.HexMap
         public void ToggleMapGeneration(bool toggle)
         {
             generateMaps = toggle;
+        }
+
+        public void ToggleWrapping(bool toggle)
+        {
+            wrapping = toggle;
         }
     }
 }

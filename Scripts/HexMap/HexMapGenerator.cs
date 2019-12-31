@@ -99,7 +99,7 @@ namespace ErksUnityLibrary.HexMap
             new Biome(0, 0), new Biome(1, 1), new Biome(1, 2), new Biome(1, 3)
         };
 
-        public void GenerateMap(int x, int z)
+        public void GenerateMap(int x, int z, bool wrapping)
         {
             Random.State originalRandomState = Random.state;
             if (!useFixedSeed)
@@ -112,7 +112,7 @@ namespace ErksUnityLibrary.HexMap
             Random.InitState(seed);
 
             cellCount = x * z;
-            grid.CreateMap(x, z);
+            grid.CreateMap(x, z, wrapping);
 
             if (searchFrontier == null)
             {
@@ -150,12 +150,17 @@ namespace ErksUnityLibrary.HexMap
                 regions.Clear();
             }
 
+            int borderX = grid.wrapping ? regionBorder : mapBorderX;
             MapRegion region;
             switch (regionCount)
             {
                 default:
-                    region.xMin = mapBorderX;
-                    region.xMax = grid.cellCountX - mapBorderX;
+                    if (grid.wrapping)
+                    {
+                        borderX = 0;
+                    }
+                    region.xMin = borderX;
+                    region.xMax = grid.cellCountX - borderX;
                     region.zMin = mapBorderZ;
                     region.zMax = grid.cellCountZ - mapBorderZ;
                     regions.Add(region);
@@ -164,19 +169,23 @@ namespace ErksUnityLibrary.HexMap
                 case 2:
                     if (Random.value < 0.5f)
                     {
-                        region.xMin = mapBorderX;
+                        region.xMin = borderX;
                         region.xMax = grid.cellCountX / 2 - regionBorder;
                         region.zMin = mapBorderZ;
                         region.zMax = grid.cellCountZ - mapBorderZ;
                         regions.Add(region);
                         region.xMin = grid.cellCountX / 2 + regionBorder;
-                        region.xMax = grid.cellCountX - mapBorderX;
+                        region.xMax = grid.cellCountX - borderX;
                         regions.Add(region);
                     }
                     else
                     {
-                        region.xMin = mapBorderX;
-                        region.xMax = grid.cellCountX - mapBorderX;
+                        if (grid.wrapping)
+                        {
+                            borderX = 0;
+                        }
+                        region.xMin = borderX;
+                        region.xMax = grid.cellCountX - borderX;
                         region.zMin = mapBorderZ;
                         region.zMax = grid.cellCountZ / 2 - regionBorder;
                         regions.Add(region);
@@ -187,7 +196,7 @@ namespace ErksUnityLibrary.HexMap
                     break;
 
                 case 3:
-                    region.xMin = mapBorderX;
+                    region.xMin = borderX;
                     region.xMax = grid.cellCountX / 3 - regionBorder;
                     region.zMin = mapBorderZ;
                     region.zMax = grid.cellCountZ - mapBorderZ;
@@ -196,23 +205,23 @@ namespace ErksUnityLibrary.HexMap
                     region.xMax = grid.cellCountX * 2 / 3 - regionBorder;
                     regions.Add(region);
                     region.xMin = grid.cellCountX * 2 / 3 + regionBorder;
-                    region.xMax = grid.cellCountX - mapBorderX;
+                    region.xMax = grid.cellCountX - borderX;
                     regions.Add(region);
                     break;
 
                 case 4:
-                    region.xMin = mapBorderX;
+                    region.xMin = borderX;
                     region.xMax = grid.cellCountX / 2 - regionBorder;
                     region.zMin = mapBorderZ;
                     region.zMax = grid.cellCountZ / 2 - regionBorder;
                     regions.Add(region);
                     region.xMin = grid.cellCountX / 2 + regionBorder;
-                    region.xMax = grid.cellCountX - mapBorderX;
+                    region.xMax = grid.cellCountX - borderX;
                     regions.Add(region);
                     region.zMin = grid.cellCountZ / 2 + regionBorder;
                     region.zMax = grid.cellCountZ - mapBorderZ;
                     regions.Add(region);
-                    region.xMin = mapBorderX;
+                    region.xMin = borderX;
                     region.xMax = grid.cellCountX / 2 - regionBorder;
                     regions.Add(region);
                     break;
