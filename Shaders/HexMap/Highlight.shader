@@ -1,4 +1,4 @@
-﻿Shader "Custom/Highlight" 
+﻿Shader "Custom/HexMap/Highlight" 
 {
 	Properties
 	{

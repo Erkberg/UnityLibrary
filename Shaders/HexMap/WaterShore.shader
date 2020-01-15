@@ -1,4 +1,4 @@
-﻿Shader "Custom/WaterShore"
+﻿Shader "Custom/HexMap/WaterShore"
 {
     Properties
     {

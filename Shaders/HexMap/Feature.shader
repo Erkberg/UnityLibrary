@@ -1,4 +1,4 @@
-﻿Shader "Custom/Feature" 
+﻿Shader "Custom/HexMap/Feature" 
 {
 	Properties
 	{

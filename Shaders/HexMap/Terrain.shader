@@ -1,4 +1,4 @@
-﻿Shader "Custom/Terrain"
+﻿Shader "Custom/HexMap/Terrain"
 {
     Properties
     {

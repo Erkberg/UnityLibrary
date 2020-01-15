@@ -1,4 +1,4 @@
-﻿Shader "Custom/VertexColors"
+﻿Shader "Custom/HexMap/VertexColors"
 {
     Properties
     {

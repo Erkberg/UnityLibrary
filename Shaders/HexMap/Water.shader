@@ -1,4 +1,4 @@
-﻿Shader "Custom/River"
+﻿Shader "Custom/HexMap/Water"
 {
     Properties
     {
@@ -9,13 +9,14 @@
     }
     SubShader
     {
-        Tags { "RenderType"="Transparent" "Queue"="Transparent+1" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
 		LOD 200
 		
 		CGPROGRAM
 		#pragma surface surf StandardSpecular alpha vertex:vert // fullforwardshadows
 		#pragma target 3.0
 		#pragma multi_compile _ HEX_MAP_EDIT_MODE
+
 		#include "Water.cginc"
 		#include "HexCellData.cginc"
 
@@ -24,6 +25,7 @@
         struct Input
         {
             float2 uv_MainTex;
+			float3 worldPos;
 			float2 visibility;
         };
 
@@ -44,18 +46,19 @@
 
 			float4 cell0 = GetCellData(v, 0);
 			float4 cell1 = GetCellData(v, 1);
+			float4 cell2 = GetCellData(v, 2);
 
-			data.visibility.x = cell0.x * v.color.x + cell1.x * v.color.y;
+			data.visibility.x = cell0.x * v.color.x + cell1.x * v.color.y + cell2.x * v.color.z;
 			data.visibility.x = lerp(0.25, 1, data.visibility.x);
-			data.visibility.y = cell0.y * v.color.x + cell1.y * v.color.y;
+			data.visibility.y = cell0.y * v.color.x + cell1.y * v.color.y + cell2.y * v.color.z;
 		}
 
         void surf (Input IN, inout SurfaceOutputStandardSpecular o)
         {
-            float river = River(IN.uv_MainTex, _MainTex);
-			
+            float waves = Waves(IN.worldPos.xz, _MainTex);
+
+			fixed4 c = saturate(_Color + waves);
 			float explored = IN.visibility.y;
-			fixed4 c = saturate(_Color + river);
 			o.Albedo = c.rgb * IN.visibility.x;
 			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;

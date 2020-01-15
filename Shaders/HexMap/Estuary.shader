@@ -1,4 +1,4 @@
-﻿Shader "Custom/Road"
+﻿Shader "Custom/HexMap/Estuary"
 {
     Properties
     {
@@ -9,23 +9,14 @@
     }
     SubShader
     {
-        Tags 
-		{ 
-			"RenderType"="Opaque" 
-			"Queue" = "Geometry+1"
-		}
-        LOD 200
-		Offset -1, -1
-
-        CGPROGRAM
-        // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf StandardSpecular fullforwardshadows decal:blend vertex:vert
-
-        // Use shader model 3.0 target, to get nicer looking lighting
-        #pragma target 3.0
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+		LOD 200
+		
+		CGPROGRAM
+		#pragma surface surf StandardSpecular alpha vertex:vert // fullforwardshadows
+		#pragma target 3.0
 		#pragma multi_compile _ HEX_MAP_EDIT_MODE
-
-		#include "HexMetrics.cginc"
+		#include "Water.cginc"
 		#include "HexCellData.cginc"
 
         sampler2D _MainTex;
@@ -33,6 +24,7 @@
         struct Input
         {
             float2 uv_MainTex;
+			float2 riverUV;
 			float3 worldPos;
 			float2 visibility;
         };
@@ -48,9 +40,10 @@
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
-		void vert(inout appdata_full v, out Input data) 
+		void vert (inout appdata_full v, out Input data) 
 		{
 			UNITY_INITIALIZE_OUTPUT(Input, data);
+			data.riverUV = v.texcoord1.xy;
 
 			float4 cell0 = GetCellData(v, 0);
 			float4 cell1 = GetCellData(v, 1);
@@ -62,18 +55,24 @@
 
         void surf (Input IN, inout SurfaceOutputStandardSpecular o)
         {
-			float4 noise = tex2D(_MainTex, IN.worldPos.xz * (3 * TILING_SCALE));
-			fixed4 c = _Color * ((noise.y * 0.75 + 0.25) * IN.visibility.x);
-			float blend = IN.uv_MainTex.x;
-			blend *= noise.x + 0.5;
-			blend = smoothstep(0.3, 0.5, blend);
+			float shore = IN.uv_MainTex.y;
+			float foam = Foam(shore, IN.worldPos.xz, _MainTex);
+			float waves = Waves(IN.worldPos.xz, _MainTex);
+			waves *= 1 - shore;
+
+			float shoreWater = max(foam, waves);
+
+			float river = River(IN.riverUV, _MainTex);
+
+			float water = lerp(shoreWater, river, IN.uv_MainTex.x);
 
 			float explored = IN.visibility.y;
-			o.Albedo = c.rgb;
+			fixed4 c = saturate(_Color + water);
+			o.Albedo = c.rgb * IN.visibility.x;
 			o.Specular = _Specular * explored;
 			o.Smoothness = _Glossiness;
 			o.Occlusion = explored;
-			o.Alpha = blend * explored;
+			o.Alpha = c.a * explored;
         }
         ENDCG
     }
