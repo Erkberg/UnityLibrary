@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace ErksUnityLibrary
 {
@@ -15,6 +16,22 @@ namespace ErksUnityLibrary
             {
                 Debug.Log("no particles object");
             }
+        }
+
+        public static Vector3 GetFirstParticleCollision(this ParticleSystem particles, GameObject other)
+        {
+            Vector3 position = Vector3.zero;
+            List<ParticleCollisionEvent> collisionEvents = new List<ParticleCollisionEvent>();
+            int numCollisionEvents = particles.GetCollisionEvents(other, collisionEvents);
+
+            int i = 0;
+
+            if (numCollisionEvents > 0)
+            {
+                position = collisionEvents[i].intersection;
+            }
+
+            return position;
         }
     }
 }
