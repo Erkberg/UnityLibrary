@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace ErksUnityLibrary
 {
@@ -112,6 +113,16 @@ namespace ErksUnityLibrary
             Vector3 scale = transform.localScale;
             scale.z = z;
             transform.localScale = scale;
+        }
+
+        public static List<Transform> GetAllChildren(this Transform transform)
+        {
+            List<Transform> list = new List<Transform>();
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                list.Add(transform.GetChild(i));
+            }
+            return list;
         }
     }
 }
