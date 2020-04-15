@@ -138,7 +138,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &453999996
 RectTransform:
   m_ObjectHideFlags: 0
@@ -221,7 +221,7 @@ RectTransform:
   m_GameObject: {fileID: 493675171}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.033, y: 0.033, z: 1}
   m_Children: []
   m_Father: {fileID: 1061288565}
   m_RootOrder: 0
@@ -519,7 +519,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1061288562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -568,7 +568,7 @@ Canvas:
   m_GameObject: {fileID: 1061288561}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -589,7 +589,7 @@ RectTransform:
   m_GameObject: {fileID: 1061288561}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 493675172}
   m_Father: {fileID: 0}
@@ -598,8 +598,8 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_SizeDelta: {x: 10, y: 10}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1061288566
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -612,6 +612,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f276f32a75a810649af2c8d6b6ef7cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  targetTransform: {fileID: 581697614}
+  moveWithTargetTransform: 1
+  initialOffset: {x: 0, y: 0.5, z: 0}
+  finalOffset: {x: 0, y: 1, z: 0}
+  movementDuration: 1
+  delayBeforeDisappear: 0
+  movementEase: 9
+  fade: 1
+  fadeInDuration: 0.2
+  fadeInEase: 11
+  fadeOutDuration: 0.2
+  fadeOutEase: 12
+  useOnlyOneText: 0
+  protoText: {fileID: 493675173}
+  colors: []
+  faceCamera: 1
 --- !u!1 &1261778663
 GameObject:
   m_ObjectHideFlags: 0
@@ -1499,7 +1515,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1968738619
 RectTransform:
   m_ObjectHideFlags: 0
