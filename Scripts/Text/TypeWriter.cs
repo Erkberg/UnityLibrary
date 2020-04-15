@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace ErksUnityLibrary
 {
     public class TypeWriter : MonoBehaviour
     {
         public Text targetText;
+        public TextMeshProUGUI targetTextMeshPro;
 
         public TextAudioType textAudioType;
         public enum TextAudioType { None, Mumbling, Typing, VoiceOver }
@@ -111,7 +113,12 @@ namespace ErksUnityLibrary
         {
             //Debug.Log("skip text");
             StopAllCoroutines();
-            targetText.text += text;
+
+            if(targetText)
+                targetText.text += text;
+            if (targetTextMeshPro)
+                targetTextMeshPro.text += text;
+
             text = "";
             OnTypingEnded();
         }
@@ -144,7 +151,10 @@ namespace ErksUnityLibrary
         public void ClearText()
         {
             //Debug.Log("clear text");
-            targetText.text = "";
+            if (targetText)
+                targetText.text = "";
+            if (targetTextMeshPro)
+                targetTextMeshPro.text = "";            
         }
 
         IEnumerator Type()
@@ -152,7 +162,12 @@ namespace ErksUnityLibrary
             if (text.Length > 0)
             {
                 string firstChar = text[0].ToString();
-                targetText.text += firstChar;
+
+                if (targetText)
+                    targetText.text += firstChar;
+                if (targetTextMeshPro)
+                    targetTextMeshPro.text += firstChar;
+
                 CheckTypeSound();
 				text = text.Substring(1);
 
