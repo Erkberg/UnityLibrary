@@ -79,7 +79,7 @@ namespace ErksUnityLibrary
                             hitGround = true;
                             GameObject hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
-                            Debug.Log(hitObject.name + " " + distance + hit.point);
+                            //Debug.Log(hitObject.name + " " + distance + hit.point);
                             lastGroundedPosition = transform.position;
 
                             if (hit.point != Vector2.zero)
@@ -101,7 +101,7 @@ namespace ErksUnityLibrary
                             hitGround = true;
                             GameObject hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
-                            Debug.Log(hitObject.name + " " + distance + hit.point);
+                            //Debug.Log(hitObject.name + " " + distance + hit.point);
                             lastGroundedPosition = transform.position;                            
 
                             if (hit.point != Vector3.zero)                                
