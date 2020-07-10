@@ -25,7 +25,7 @@ namespace ErksUnityLibrary
         [Space]
         public Transform castOrigin;
         public Vector3 colliderSize = new Vector3(1f, 1f, 1f);
-        public float castDistance = 0.01f;
+        public float castDistance = 0.02f;
         public Vector3 castDirection = Vector3.down;
 
         [Space]

@@ -2065,7 +2065,7 @@ MonoBehaviour:
   colliderType: 0
   castOrigin: {fileID: 0}
   colliderSize: {x: 1, y: 1, z: 1}
-  castDistance: 0.01
+  castDistance: 0.02
   castDirection: {x: 0, y: -1, z: 0}
   groundCheckFrameInterval: 1
   layersToCheckAgainst:

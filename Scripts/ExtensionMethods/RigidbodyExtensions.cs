@@ -20,6 +20,20 @@ namespace ErksUnityLibrary
             rb2D.velocity = velocity;
         }
         
+        public static void AddVelocityX(this Rigidbody2D rb2D, float value)
+        {
+            Vector2 velocity = rb2D.velocity;
+            velocity.x += value;
+            rb2D.velocity = velocity;
+        }
+        
+        public static void AddVelocityY(this Rigidbody2D rb2D, float value)
+        {
+            Vector2 velocity = rb2D.velocity;
+            velocity.y += value;
+            rb2D.velocity = velocity;
+        }
+        
         public static void SetVelocityX(this Rigidbody rb, float value)
         {
             Vector3 velocity = rb.velocity;

@@ -134,6 +134,9 @@ MonoBehaviour:
   jumpButton: Jump
   moveSpeed: 4
   jumpStrength: 6
+  applyExtraGravity: 1
+  fallMultiplier: 2.5
+  lowJumpMultiplier: 2
 --- !u!114 &4178821355586260440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -150,7 +153,7 @@ MonoBehaviour:
   colliderType: 0
   castOrigin: {fileID: 0}
   colliderSize: {x: 1, y: 1, z: 1}
-  castDistance: 0.01
+  castDistance: 0.02
   castDirection: {x: 0, y: -1, z: 0}
   groundCheckFrameInterval: 1
   layersToCheckAgainst:
