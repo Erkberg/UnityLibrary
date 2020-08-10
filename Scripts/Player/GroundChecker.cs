@@ -32,6 +32,10 @@ namespace ErksUnityLibrary
         public int groundCheckFrameInterval = 1;
         public LayerMask layersToCheckAgainst;
 
+        [Space] 
+        public int coyoteFrames = 0;
+        private int coyoteFramesPassed = 0;
+
         [Header("State")]
         public bool isGrounded;
         public bool wasGroundedLastFrame;
@@ -58,7 +62,29 @@ namespace ErksUnityLibrary
             if (framesPassedSinceLastCheck >= groundCheckFrameInterval)
             {
                 framesPassedSinceLastCheck = 0;
-                isGrounded = CheckGround();
+                bool isGroundedThisFrame = CheckGround();
+                CheckCoyoteFrames(isGroundedThisFrame);
+            }
+        }
+
+        private void CheckCoyoteFrames(bool isGroundedThisFrame)
+        {
+            if (coyoteFrames == 0 || isGroundedThisFrame || !isGrounded)
+            {
+                coyoteFramesPassed = 0;
+                isGrounded = isGroundedThisFrame;
+            }
+            else
+            {
+                if (isGrounded)
+                {
+                    coyoteFramesPassed++;
+                    if (coyoteFramesPassed >= coyoteFrames)
+                    {
+                        coyoteFramesPassed = 0;
+                        isGrounded = false;
+                    }
+                }
             }
         }
 

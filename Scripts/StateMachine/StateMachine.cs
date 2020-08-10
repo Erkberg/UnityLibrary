@@ -6,8 +6,8 @@ namespace ErksUnityLibrary
 {
     public class StateMachine
     {
-        List<BaseState> states = new List<BaseState>();
-        BaseState currentState;
+        protected List<BaseState> states = new List<BaseState>();
+        protected BaseState currentState;
 
         public void AddState(BaseState state)
         {
