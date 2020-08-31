@@ -54,6 +54,27 @@ namespace ErksUnityLibrary
             velocity.z = value;
             rb.velocity = velocity;
         }
+        
+        public static void AddVelocityX(this Rigidbody rb, float value)
+        {
+            Vector3 velocity = rb.velocity;
+            velocity.x += value;
+            rb.velocity = velocity;
+        }
+        
+        public static void AddVelocityY(this Rigidbody rb, float value)
+        {
+            Vector3 velocity = rb.velocity;
+            velocity.y += value;
+            rb.velocity = velocity;
+        }
+        
+        public static void AddVelocityZ(this Rigidbody rb, float value)
+        {
+            Vector3 velocity = rb.velocity;
+            velocity.z += value;
+            rb.velocity = velocity;
+        }
     }
 }
 
