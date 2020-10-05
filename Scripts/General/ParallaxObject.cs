@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace ErksUnityLibrary
 {
@@ -12,6 +13,7 @@ namespace ErksUnityLibrary
         [Space] 
         public bool looping = false;
         public Vector3 loopOffset;
+        public UnityEvent onLoop;
 
         private Vector3 previousReferencePosition;
         private bool firstFrame = true;
@@ -24,7 +26,7 @@ namespace ErksUnityLibrary
             }
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (firstFrame)
             {
@@ -95,6 +97,7 @@ namespace ErksUnityLibrary
 
             if (offsetToApply != Vector3.zero)
             {
+                onLoop?.Invoke();
                 transform.position += offsetToApply;
             }
         }
