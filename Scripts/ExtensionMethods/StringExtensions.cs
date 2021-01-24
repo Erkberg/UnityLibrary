@@ -8,12 +8,15 @@ namespace ErksUnityLibrary
     public static class StringExtensions
     {
         private const string ParseNotSuccessfulTemplate = "Couldn't parse {0}";
+        private const string Dot = ".";
+        private const string Comma = ",";
 
         public static float ToFloat(this string value, bool showWarning = false)
         {
             float result = 0;
+            value = value.Replace(Comma, Dot);
 
-            bool parseSuccessful = float.TryParse(value, NumberStyles.Float, new CultureInfo("en-US").NumberFormat, out result);
+            bool parseSuccessful = float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out result);
 
             if (!parseSuccessful && showWarning)
             {
@@ -26,8 +29,9 @@ namespace ErksUnityLibrary
         public static int ToInt(this string value, bool showWarning = false)
         {
             int result = 0;
+            value = value.Replace(Comma, Dot);
 
-            bool parseSuccessful = int.TryParse(value, NumberStyles.Integer, new CultureInfo("en-US").NumberFormat, out result);
+            bool parseSuccessful = int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture.NumberFormat, out result);
 
             if (!parseSuccessful && showWarning)
             {
