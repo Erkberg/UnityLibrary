@@ -81,5 +81,10 @@ namespace ErksUnityLibrary
         {
             return Mathf.Abs(value - otherValue) < 0.001f;
         }
+
+        public static string ToLeadingZeroString(this int value)
+        {
+            return value < 10 ? $"0{value}" : value.ToString();
+        }
     }
 }
