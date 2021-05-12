@@ -22,6 +22,16 @@ namespace ErksUnityLibrary
 
             if (delayTillStop > 0f) Invoke("StopShake", delayTillStop);
         }
+        
+        public void ModifyCurrentShake(float newOffset)
+        {
+            shakeOffset = newOffset;
+        }
+
+        public void AddToCurrentShake(float newOffset)
+        {
+            shakeOffset += newOffset;
+        }
 
         public void StopShake()
         {

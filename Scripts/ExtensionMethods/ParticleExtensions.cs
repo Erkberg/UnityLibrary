@@ -33,5 +33,19 @@ namespace ErksUnityLibrary
 
             return position;
         }
+        
+        public static void AddToEmissionOverTime(this ParticleSystem particles, float valueToAdd)
+        {
+            if (particles)
+            {
+                var em = particles.emission;
+                float rate = em.rateOverTime.constant + valueToAdd;
+                em.rateOverTime = rate;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
     }
 }
