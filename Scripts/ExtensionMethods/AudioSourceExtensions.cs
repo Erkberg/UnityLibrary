@@ -44,5 +44,21 @@ namespace ErksUnityLibrary
             audioSource.clip = clip;
             audioSource.Play();
         }
+        
+        public static IEnumerator FadeOut(this AudioSource audioSource, float duration)
+        {
+            float initialVolume = audioSource.volume;
+            float step = initialVolume / duration;
+
+            while(duration > 0f)
+            {
+                duration -= Time.deltaTime;
+                audioSource.volume -= step * Time.deltaTime;
+                yield return null;
+            }
+
+            audioSource.Stop();
+            audioSource.volume = initialVolume;
+        }
     }
 }
