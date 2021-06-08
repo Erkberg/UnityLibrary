@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ErksUnityLibrary
@@ -20,5 +21,10 @@ namespace ErksUnityLibrary
             int j = Array.IndexOf(values, src) - 1;
             return (j == -1) ? values[values.Length - 1] : values[j];            
         }
+		
+		public static IEnumerable<T> GetValues<T>() 
+		{
+			return Enum.GetValues(typeof(T)).Cast<T>();
+		}
     }
 }
