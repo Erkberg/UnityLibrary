@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ErksUnityLibrary
 {
@@ -45,7 +47,7 @@ namespace ErksUnityLibrary
             audioSource.Play();
         }
         
-        public static IEnumerator FadeOut(this AudioSource audioSource, float duration)
+        public static IEnumerator FadeOut(this AudioSource audioSource, float duration, Action onCompleted)
         {
             float initialVolume = audioSource.volume;
             float step = initialVolume / duration;
@@ -59,6 +61,8 @@ namespace ErksUnityLibrary
 
             audioSource.Stop();
             audioSource.volume = initialVolume;
+            
+            onCompleted?.Invoke();
         }
     }
 }
