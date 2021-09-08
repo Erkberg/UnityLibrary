@@ -64,5 +64,22 @@ namespace ErksUnityLibrary
             
             onCompleted?.Invoke();
         }
+
+        public static IEnumerator FadeIn(this AudioSource audioSource, float duration, float targetVolume = 1f, Action onCompleted = null)
+        {
+            float initialVolume = audioSource.volume;
+            float step = (targetVolume - initialVolume) / duration;
+
+            while (duration > 0f)
+            {
+                duration -= Time.deltaTime;
+                audioSource.volume += step * Time.deltaTime;
+                yield return null;
+            }
+
+            audioSource.volume = targetVolume;
+
+            onCompleted?.Invoke();
+        }
     }
 }
