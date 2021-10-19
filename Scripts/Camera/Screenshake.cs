@@ -17,6 +17,9 @@ namespace ErksUnityLibrary
 
         public void StartShake(float offset, float delayTillStop = 0f)
         {
+            StopShake();
+            CancelInvoke();
+
             initialShakePosition = transform.localPosition;
             shakeOffset = offset;
 
