@@ -10,6 +10,11 @@ namespace ErksUnityLibrary
         private Vector3 initialShakePosition;
         private float shakeOffset;
 
+        private void Awake()
+        {
+            initialShakePosition = transform.localPosition;
+        }
+
         private void Update()
         {
             if (shakeOffset != 0f) Shake();
