@@ -72,6 +72,19 @@ namespace ErksUnityLibrary
             }
         }
 
+        public static void SetStartSize(this ParticleSystem particles, float value)
+        {
+            if (particles)
+            {
+                var main = particles.main;
+                main.startSize = value;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
+
         public static void SetStartColor(this ParticleSystem particles, Color color)
         {
             if (particles)
