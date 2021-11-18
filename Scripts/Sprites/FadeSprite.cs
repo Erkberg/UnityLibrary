@@ -25,6 +25,11 @@ namespace ErksUnityLibrary
             Fade();
         }
 
+        public float GetFadeValue(float valueToSubtract)
+        {
+            return spriteRenderer.color.a - valueToSubtract;
+        }
+
         private void Fade()
         {
             if (direction != 0)
