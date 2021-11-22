@@ -94,6 +94,13 @@ namespace ErksUnityLibrary
         }
 
         // Local scale
+        public static void SetScale(this Transform transform, float scale)
+        {
+            transform.SetScaleX(scale);
+            transform.SetScaleY(scale);
+            transform.SetScaleZ(scale);
+        }
+
         public static void SetScaleX(this Transform transform, float x)
         {
             Vector3 scale = transform.localScale;
