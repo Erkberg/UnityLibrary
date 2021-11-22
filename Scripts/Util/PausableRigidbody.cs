@@ -26,7 +26,6 @@ namespace ErksUnityLibrary
         {
             if(rb)
             {
-                Debug.Log("pause " + gameObject.name);
                 previousVelocity = rb.velocity;
                 previousAngularVelocity = rb.angularVelocity;
                 rb.isKinematic = true;
@@ -44,7 +43,6 @@ namespace ErksUnityLibrary
         {
             if (rb)
             {
-                Debug.Log("resume " + gameObject.name);
                 rb.isKinematic = false;
                 rb.velocity = previousVelocity;
                 rb.angularVelocity = previousAngularVelocity;
