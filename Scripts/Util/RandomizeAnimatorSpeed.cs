@@ -15,5 +15,10 @@ public class RandomizeAnimatorSpeed : MonoBehaviour
 
         if (animator)
             animator.speed = Random.Range(minValue, maxValue);
-    }    
+    }
+
+    private void Reset()
+    {
+        animator = GetComponent<Animator>();
+    }
 }
