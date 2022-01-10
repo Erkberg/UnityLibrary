@@ -1,4 +1,4 @@
-Random.rotation
+Random.rotation and Random.color
 Tag EditorOnly
 Default params: void DoSomething(Vector3 v3 = default(Vector3))
 Gameobject.scene

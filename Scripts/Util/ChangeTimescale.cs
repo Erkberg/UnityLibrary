@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class ChangeTimescale : MonoBehaviour
 {
-    [Range(0f, 5f)]
+    [Range(0f, 8f)]
     public float timeScale = 1f;
 
     private float previousScale = 1f;
