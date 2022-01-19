@@ -40,6 +40,7 @@ namespace ErksUnityLibrary
         public bool isGrounded;
         public bool wasGroundedLastFrame;
         public Vector3 lastGroundedPosition;
+        public Vector3 previousLastGroundedPosition;
 
         [Space]
         public bool drawGizmos = false;
@@ -106,6 +107,7 @@ namespace ErksUnityLibrary
                             GameObject hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
                             //Debug.Log(hitObject.name + " " + distance + hit.point);
+                            previousLastGroundedPosition = lastGroundedPosition;
                             lastGroundedPosition = transform.position;
 
                             if (hit.point != Vector2.zero)
@@ -128,6 +130,7 @@ namespace ErksUnityLibrary
                             GameObject hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
                             //Debug.Log(hitObject.name + " " + distance + hit.point);
+                            previousLastGroundedPosition = lastGroundedPosition;
                             lastGroundedPosition = transform.position;                            
 
                             if (hit.point != Vector3.zero)                                
