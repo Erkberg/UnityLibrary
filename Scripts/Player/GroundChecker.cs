@@ -41,6 +41,7 @@ namespace ErksUnityLibrary
         public bool wasGroundedLastFrame;
         public Vector3 lastGroundedPosition;
         public Vector3 previousLastGroundedPosition;
+        public GameObject hitObject;
 
         [Space]
         public bool drawGizmos = false;
@@ -94,17 +95,18 @@ namespace ErksUnityLibrary
             bool hitGround = false;
             hitPosition = Vector3.zero;
             Vector3 origin = castOrigin.position;
+            hitObject = null;
 
-            switch(dimensionType)
+            switch (dimensionType)
             {
                 case PhysicsCastDimensionType.TwoD:
                     RaycastHit2D[] hits2D = GetColliderCastHits2D(origin);
                     if (hits2D != null)
                     {
                         foreach (RaycastHit2D hit in hits2D)
-                        {
+                        {                            
                             hitGround = true;
-                            GameObject hitObject = hit.collider.gameObject;
+                            hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
                             //Debug.Log(hitObject.name + " " + distance + hit.point);
                             previousLastGroundedPosition = lastGroundedPosition;
@@ -127,7 +129,7 @@ namespace ErksUnityLibrary
                         foreach (RaycastHit hit in hits3D)
                         {
                             hitGround = true;
-                            GameObject hitObject = hit.collider.gameObject;
+                            hitObject = hit.collider.gameObject;
                             float distance = Mathf.Abs(origin.y - hit.point.y);
                             //Debug.Log(hitObject.name + " " + distance + hit.point);
                             previousLastGroundedPosition = lastGroundedPosition;
