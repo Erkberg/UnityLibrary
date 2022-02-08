@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace ErksUnityLibrary
@@ -46,6 +47,11 @@ namespace ErksUnityLibrary
             {
                 rend.enabled = enabled;
             }
+        }
+
+        private void Reset()
+        {
+            renderers = GetComponentsInChildren<Renderer>().ToList();
         }
     }
 }
