@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace ErksUnityLibrary
 {
@@ -15,20 +16,14 @@ namespace ErksUnityLibrary
             initialShakePosition = transform.localPosition;
         }
 
-        private void Update()
-        {
-            if (shakeOffset != 0f) Shake();
-        }
-
-        public void StartShake(float offset, float delayTillStop = 0f)
+        public void StartShake(float offset = 0.1f, float duration = 0.1f)
         {
             StopShake();
-            CancelInvoke();
 
             initialShakePosition = transform.localPosition;
             shakeOffset = offset;
 
-            if (delayTillStop > 0f) Invoke("StopShake", delayTillStop);
+            StartCoroutine(ShakeSequence(duration));
         }
         
         public void ModifyCurrentShake(float newOffset)
@@ -43,8 +38,21 @@ namespace ErksUnityLibrary
 
         public void StopShake()
         {
+            StopAllCoroutines();
             shakeOffset = 0f;
-            transform.localPosition = initialShakePosition;
+            transform.localPosition = initialShakePosition;            
+        }
+
+        private IEnumerator ShakeSequence(float duration)
+        {
+            float durationPassed = 0f;
+
+            while(durationPassed < duration)
+            {
+                Shake();
+                yield return null;
+                durationPassed += Time.deltaTime;
+            }
         }
 
         private void Shake()
