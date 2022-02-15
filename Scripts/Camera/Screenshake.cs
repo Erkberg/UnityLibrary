@@ -39,8 +39,7 @@ namespace ErksUnityLibrary
         public void StopShake()
         {
             StopAllCoroutines();
-            shakeOffset = 0f;
-            transform.localPosition = initialShakePosition;            
+            shakeOffset = 0f;                      
         }
 
         private IEnumerator ShakeSequence(float duration)
@@ -53,6 +52,8 @@ namespace ErksUnityLibrary
                 yield return null;
                 durationPassed += Time.deltaTime;
             }
+
+            transform.localPosition = initialShakePosition;
         }
 
         private void Shake()
