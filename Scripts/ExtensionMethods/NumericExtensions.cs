@@ -9,6 +9,16 @@ namespace ErksUnityLibrary
             return (value - from1) / (to1 - from1) * (to2 - from2) + from2;
         }
 
+        public static float Normalize(this float value)
+        {
+            if (value > 0f)
+                return 1f;
+            else if (value < 0f)
+                return -1f;
+            else
+                return 0f;
+        }
+
         public static float Squared(this float f)
         {
             return f * f;
