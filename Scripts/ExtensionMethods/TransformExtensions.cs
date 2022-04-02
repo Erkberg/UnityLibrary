@@ -27,6 +27,21 @@ namespace ErksUnityLibrary
             transform.position = position;
         }
 
+        public static void AddPositionX(this Transform transform, float x)
+        {
+            transform.position = transform.position + new Vector3(x, 0f, 0f);
+        }
+
+        public static void AddPositionY(this Transform transform, float y)
+        {
+            transform.position = transform.position + new Vector3(0f, y, 0f);
+        }
+
+        public static void AddPositionZ(this Transform transform, float z)
+        {
+            transform.position = transform.position + new Vector3(0f, 0f, z);
+        }
+
         // Local position
         public static void SetLocalPositionX(this Transform transform, float x)
         {
