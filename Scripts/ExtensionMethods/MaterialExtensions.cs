@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,6 +33,44 @@ namespace ErksUnityLibrary
             Color c = mat.color;
             c.a = a;
             mat.color = c;
+        }
+
+        public static IEnumerator FadeOut(this Material material, float duration, Action onCompleted = null)
+        {
+            float initialAlpha = material.color.a;
+            float currentAlpha = initialAlpha;
+            float step = initialAlpha / duration;            
+
+            while (duration > 0f)
+            {
+                duration -= Time.deltaTime;
+                currentAlpha -= step * Time.deltaTime;
+                material.SetColorA(currentAlpha);
+                yield return null;
+            }
+
+            material.SetColorA(0f);
+
+            onCompleted?.Invoke();
+        }
+
+        public static IEnumerator FadeIn(this Material material, float duration, float targetAlpha = 1f, Action onCompleted = null)
+        {
+            float initialAlpha = material.color.a;
+            float currentAlpha = initialAlpha;
+            float step = (targetAlpha - initialAlpha) / duration;
+
+            while (duration > 0f)
+            {
+                duration -= Time.deltaTime;
+                currentAlpha += step * Time.deltaTime;
+                material.SetColorA(currentAlpha);
+                yield return null;
+            }
+
+            material.SetColorA(targetAlpha);
+
+            onCompleted?.Invoke();
         }
     }
 }
