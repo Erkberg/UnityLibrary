@@ -146,5 +146,25 @@ namespace ErksUnityLibrary
             }
             return list;
         }
+
+        public static void DestroyAllChildren(this Transform transform)
+        {
+            Transform[] children = transform.GetComponentsInChildren<Transform>();
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i] != transform && children[i] != null)
+                {
+                    if(Application.isPlaying)
+                    {
+                        Object.Destroy(children[i].gameObject);
+                    }
+                    else
+                    {
+                        Object.DestroyImmediate(children[i].gameObject);
+                    }                    
+                }
+            }
+        }
     }
 }
