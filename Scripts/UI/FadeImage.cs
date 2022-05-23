@@ -6,57 +6,63 @@ namespace ErksUnityLibrary
 {
     public class FadeImage : MonoBehaviour
     {
+        public Image image;
+        public bool useUnscaledDeltaTime;
+
         private int direction = 0;
         private float fadeSpeed = 1f;
         private float threshold = 1f;
-
-        private Image image;
 
         private bool destroyAfterFade = false;
         private Action onComplete;
 
         void Awake()
         {
-            image = GetComponent<Image>();
+            if(!image)
+            {
+                image = GetComponent<Image>();
+            }            
         }
 
         // Update is called once per frame
         void Update()
         {
-            Fade();
+            if (direction != 0)
+            {
+                Fade();
+            }            
         }
 
         private void Fade()
         {
-            if (direction != 0)
+            float time = useUnscaledDeltaTime ? Time.unscaledDeltaTime : Time.deltaTime;
+
+            Color color = image.color;
+            color.a += direction * time * fadeSpeed;
+
+            if (direction == -1)
             {
-                Color color = image.color;
-                color.a += direction * Time.deltaTime * fadeSpeed;
-
-                if (direction == -1)
+                if (color.a <= 0f)
                 {
-                    if (color.a <= 0f)
-                    {
-                        color.a = 0f;
-                        OnComplete();
-                    }
-                    else if (color.a <= threshold)
-                    {
-                        color.a = threshold;
-                        OnComplete();
-                    }
+                    color.a = 0f;
+                    OnComplete();
                 }
-                else if (direction == 1)
+                else if (color.a <= threshold)
                 {
-                    if (color.a >= threshold)
-                    {
-                        color.a = threshold;
-                        OnComplete();
-                    }
+                    color.a = threshold;
+                    OnComplete();
                 }
-
-                image.color = color;
             }
+            else if (direction == 1)
+            {
+                if (color.a >= threshold)
+                {
+                    color.a = threshold;
+                    OnComplete();
+                }
+            }
+
+            image.color = color;
         }
         
         private void OnComplete()
@@ -88,18 +94,23 @@ namespace ErksUnityLibrary
 
             if (inOrOut.Equals("in"))
             {
-                direction = 1;
+                SetDirection(1);
             }
 
             if (inOrOut.Equals("out"))
             {
-                direction = -1;
+                SetDirection(-1);
             }
+        }
+
+        private void SetDirection(int dir)
+        {
+            direction = dir;
         }
         
         public void StopFade()
         {
-            direction = 0;
+            SetDirection(0);
             onComplete = null;
         }
 
