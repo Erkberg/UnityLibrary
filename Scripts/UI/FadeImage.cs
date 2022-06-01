@@ -107,6 +107,11 @@ namespace ErksUnityLibrary
         {
             direction = dir;
         }
+
+        public bool IsFading()
+        {
+            return direction != 0;
+        }
         
         public void StopFade()
         {
