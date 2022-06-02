@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace ErksUnityLibrary
 {
@@ -64,21 +67,65 @@ namespace ErksUnityLibrary
         public class SpawnModule
         {
             public bool selected;
+            public bool linkPrefab;
+            public bool addParallax;
+            public float parallaxFactorForPositionZ = 100f;
+            public Vector3 parallaxLoopOffset;
             public Transform holder;
             public List<Transform> prefabs;
             public int amount;
             public Vector3 minPosition, maxPosition;
             public bool randomizeAngleY;
             public float maxScaleDeviation;
+            public bool scaleWithPositionZ;
+            public float scaleFactorZ;
 
             public void SpawnObjects()
             {
                 for (int i = 0; i < amount; i++)
                 {
-                    Quaternion rot = Quaternion.Euler(0f, Random.Range(0f, 359f), 0f);
-                    Transform element = Instantiate(prefabs.GetRandomItem(), GetRandomPosition(), 
-                        randomizeAngleY ? rot : Quaternion.identity, holder);
-                    element.localScale *= Random.Range(1f - maxScaleDeviation, 1f + maxScaleDeviation);
+                    Transform element = null;
+                    
+                    if(linkPrefab)
+                    {
+#if UNITY_EDITOR
+                        element = (Transform)PrefabUtility.InstantiatePrefab(prefabs.GetRandomItem(), holder);
+#endif
+                    }
+                    else
+                    {
+                        element = Instantiate(prefabs.GetRandomItem(), holder);
+                    }
+                    
+                    if(element)
+                    {
+                        element.position = GetRandomPosition();
+                        Quaternion rot = randomizeAngleY ? Quaternion.Euler(0f, Random.Range(0f, 359f), 0f) : Quaternion.identity;
+                        element.rotation = rot;
+                        element.localScale *= Random.Range(1f - maxScaleDeviation, 1f + maxScaleDeviation);
+
+                        if (scaleWithPositionZ)
+                        {
+                            float scaleZ = 1f - element.position.z / scaleFactorZ;
+                            if (scaleZ < 0.01f)
+                            {
+                                scaleZ = 0.01f;
+                            }
+                            element.localScale *= scaleZ;
+                        }
+
+                        if (addParallax)
+                        {
+                            ParallaxObject parallax = element.gameObject.AddComponent<ParallaxObject>();
+                            parallax.speed.x = -element.position.z / parallaxFactorForPositionZ;
+
+                            if (parallaxLoopOffset != Vector3.zero)
+                            {
+                                parallax.looping = true;
+                                parallax.loopOffset = parallaxLoopOffset;
+                            }
+                        }
+                    }                    
                 }
             }
 
