@@ -5,18 +5,21 @@ namespace ErksUnityLibrary
 {
     public class FadeSprite : MonoBehaviour
     {
+        public SpriteRenderer spriteRenderer;
+
         private int direction = 0;
         private float fadeSpeed = 1f;
         private float threshold = 1f;
-
-        private SpriteRenderer spriteRenderer;
 
         private bool destroyAfterFade = false;
         private Action onComplete;
 
         void Awake()
         {
-            spriteRenderer = GetComponent<SpriteRenderer>();
+            if(!spriteRenderer)
+            {
+                spriteRenderer = GetComponent<SpriteRenderer>();
+            }            
         }
 
         // Update is called once per frame
