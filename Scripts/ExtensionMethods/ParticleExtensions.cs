@@ -126,5 +126,18 @@ namespace ErksUnityLibrary
                 Debug.Log("no particles object");
             }
         }
+
+        public static void SetSimulationSpeed(this ParticleSystem particles, float speed)
+        {
+            if (particles)
+            {
+                var main = particles.main;
+                main.simulationSpeed = speed;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
     }
 }
