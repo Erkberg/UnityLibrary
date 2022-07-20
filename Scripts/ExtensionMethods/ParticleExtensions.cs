@@ -113,5 +113,18 @@ namespace ErksUnityLibrary
 
             return position;
         }
+
+        public static void SetShapeScale(this ParticleSystem particles, Vector3 scale)
+        {
+            if (particles)
+            {
+                var shape = particles.shape;
+                shape.scale = scale;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
     }
 }
