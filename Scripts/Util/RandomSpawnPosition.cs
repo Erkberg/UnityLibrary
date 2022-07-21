@@ -6,6 +6,15 @@ namespace ErksUnityLibrary
 {
     public static class RandomSpawnPosition
     {
+        public static Vector3 GetRandomSpawnPositionWithinBounds3D(Vector3 min, Vector3 max)
+        {
+            float x = Random.Range(min.x, max.x);
+            float y = Random.Range(min.y, max.y);
+            float z = Random.Range(min.z, max.z);
+
+            return new Vector3(x, y, z);
+        }
+
         public static Vector3 GetRandomSpawnPosition3D(float spawnX, float spawnZ, float spawnY = 0f)
         {
             Vector3 spawnPosi = Vector3.zero;
