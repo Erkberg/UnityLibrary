@@ -10,15 +10,23 @@ namespace ErksUnityLibrary
         public List<Renderer> renderers;
         public int flickerFrames = 12;
 
+        private bool isFlickering;
+
         public void StartFlicker(float duration)
         {
             StartCoroutine(FlickerSequence(duration));
+        }
+
+        public bool IsFlickering()
+        {
+            return isFlickering;
         }
 
         private IEnumerator FlickerSequence(float duration)
         {
             float durationPassed = 0f;
             bool currentlyEnabled = true;
+            isFlickering = true;
 
             while(durationPassed < duration)
             {
@@ -32,12 +40,14 @@ namespace ErksUnityLibrary
                 }                
             }
 
+            isFlickering = false;
             SetRenderersEnabled(true);
         }
 
         public void StopFlicker()
         {
             StopAllCoroutines();
+            isFlickering = false;
             SetRenderersEnabled(true);
         }
 
