@@ -35,6 +35,13 @@ namespace ErksUnityLibrary
             mat.color = c;
         }
 
+        public static void SetNamedColorA(this Material mat, string name, float a)
+        {
+            Color c = mat.GetColor(name);
+            c.a = a;
+            mat.SetColor(name, c);
+        }
+
         public static IEnumerator FadeOut(this Material material, float duration, Action onCompleted = null)
         {
             float initialAlpha = material.color.a;
