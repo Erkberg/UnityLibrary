@@ -75,6 +75,7 @@ namespace ErksUnityLibrary
             public List<Transform> prefabs;
             public int amount;
             public Vector3 minPosition, maxPosition;
+            public bool useLocalPosition;
             public bool randomizeAngleY;
             public float maxScaleDeviation;
             public bool scaleWithPositionZ;
@@ -99,7 +100,15 @@ namespace ErksUnityLibrary
                     
                     if(element)
                     {
-                        element.position = GetRandomPosition();
+                        if(useLocalPosition)
+                        {
+                            element.localPosition = GetRandomPosition();
+                        }
+                        else
+                        {
+                            element.position = GetRandomPosition();
+                        }
+                        
                         Quaternion rot = randomizeAngleY ? Quaternion.Euler(0f, Random.Range(0f, 359f), 0f) : Quaternion.identity;
                         element.rotation = rot;
                         element.localScale *= Random.Range(1f - maxScaleDeviation, 1f + maxScaleDeviation);
