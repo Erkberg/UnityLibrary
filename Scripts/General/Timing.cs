@@ -10,7 +10,7 @@ namespace ErksUnityLibrary
 
             if (parameter >= maximum)
             {
-                parameter = 0f;
+                parameter -= maximum;
                 callback();
             }
         }
