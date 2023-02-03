@@ -57,7 +57,20 @@ namespace ErksUnityLibrary
                 Debug.Log("no particles object");
             }
         }
-        
+
+        public static void SetLifetime(this ParticleSystem particles, float min, float max)
+        {
+            if (particles)
+            {
+                var main = particles.main;
+                main.startLifetime = new ParticleSystem.MinMaxCurve(min, max);
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
+
         public static void AddToLifetime(this ParticleSystem particles, float valueToAdd)
         {
             if (particles)
@@ -78,6 +91,19 @@ namespace ErksUnityLibrary
             {
                 var main = particles.main;
                 main.startSize = value;
+            }
+            else
+            {
+                Debug.Log("no particles object");
+            }
+        }
+
+        public static void SetStartSize(this ParticleSystem particles, float min, float max)
+        {
+            if (particles)
+            {
+                var main = particles.main;
+                main.startSize = new ParticleSystem.MinMaxCurve(min, max);
             }
             else
             {
