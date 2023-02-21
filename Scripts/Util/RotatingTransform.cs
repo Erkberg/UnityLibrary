@@ -8,10 +8,11 @@ namespace ErksUnityLibrary
     public class RotatingTransform : MonoBehaviour
     {
         public Vector3 rotationSpeed;
+        public bool useUnscaledDeltaTime;
 
         private void Update()
         {
-            transform.Rotate(rotationSpeed * Time.deltaTime);
+            transform.Rotate(rotationSpeed * (useUnscaledDeltaTime ? Time.unscaledDeltaTime : Time.deltaTime));
         }
     }
 }
