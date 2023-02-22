@@ -104,5 +104,15 @@ namespace ErksUnityLibrary
         {
             return ((otherVec - vec).sqrMagnitude < (precision * precision));
         }
+
+        public static Vector2 RandomVector2()
+        {
+            return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        }
+
+        public static Vector3 RandomVector3()
+        {
+            return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
+        }
     }
 }
