@@ -21,7 +21,22 @@ namespace ErksUnityLibrary
         public bool applyExtraGravity = true;
         public float fallMultiplier = 2.5f;
         public float lowJumpMultiplier = 2f;
-        
+
+        protected virtual float GetHorizontalAxis()
+        {
+            return Input.GetAxis(horizontalInputAxis);
+        }
+
+        protected virtual bool GetJumpButtonDown()
+        {
+            return Input.GetButtonDown(jumpButton);
+        }
+
+        protected virtual bool GetJumpButton()
+        {
+            return Input.GetButton(jumpButton);
+        }
+
         private void Update()
         {
             HorizontalMovement();
@@ -30,12 +45,12 @@ namespace ErksUnityLibrary
 
         private void HorizontalMovement()
         {
-            rb2D.SetVelocityX(Input.GetAxis(horizontalInputAxis) * moveSpeed);
+            rb2D.SetVelocityX(GetHorizontalAxis() * moveSpeed);
         }
 
         private void VerticalMovement()
         {
-            if (Input.GetButtonDown(jumpButton) && groundChecker.isGrounded)
+            if (GetJumpButtonDown() && groundChecker.isGrounded)
             {
                 rb2D.SetVelocityY(jumpStrength);
             }
@@ -46,7 +61,7 @@ namespace ErksUnityLibrary
                 {
                     ApplyExtraGravity(fallMultiplier);
                 }
-                else if (rb2D.velocity.y > 0f && !Input.GetButton(jumpButton))
+                else if (rb2D.velocity.y > 0f && !GetJumpButton())
                 {
                     ApplyExtraGravity(lowJumpMultiplier);
                 }
