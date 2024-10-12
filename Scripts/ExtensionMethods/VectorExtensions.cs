@@ -114,5 +114,15 @@ namespace ErksUnityLibrary
         {
             return new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f));
         }
+
+        public static Vector2 RandomVector2Normalized()
+        {
+            return RandomVector2().normalized;
+        }
+
+        public static Vector3 RandomVector3Normalized()
+        {
+            return RandomVector3().normalized;
+        }
     }
 }
