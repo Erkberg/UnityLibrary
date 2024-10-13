@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ namespace ErksUnityLibrary
 {
     public class CooldownComponent : MonoBehaviour
     {
+        public Action onCooldownPassed;
+
         [SerializeField] private float cooldown;
 
         private float cooldownPassed;
@@ -22,8 +25,9 @@ namespace ErksUnityLibrary
             {
                 cooldownPassed += Time.deltaTime;
                 if (cooldownPassed >= cooldown)
-                {
+                {                    
                     ResetCooldown();
+                    onCooldownPassed?.Invoke();
                 }
             }
         }
