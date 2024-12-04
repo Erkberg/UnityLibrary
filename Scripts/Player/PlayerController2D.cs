@@ -57,11 +57,11 @@ namespace ErksUnityLibrary
 
             if (applyExtraGravity)
             {
-                if (rb2D.velocity.y < 0f)
+                if (rb2D.GetVelocity().y < 0f)
                 {
                     ApplyExtraGravity(fallMultiplier);
                 }
-                else if (rb2D.velocity.y > 0f && !GetJumpButton())
+                else if (rb2D.GetVelocity().y > 0f && !GetJumpButton())
                 {
                     ApplyExtraGravity(lowJumpMultiplier);
                 }

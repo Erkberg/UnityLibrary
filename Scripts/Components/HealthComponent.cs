@@ -49,6 +49,11 @@ namespace ErksUnityLibrary
             return currentHealth / maxHealth;
         }
 
+        public void InvokeHealthChanged()
+        {
+            healthChanged?.Invoke();
+        }
+
         private void ClampCurrentHealth()
         {
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);

@@ -26,14 +26,14 @@ namespace ErksUnityLibrary
         {
             if(rb)
             {
-                previousVelocity = rb.velocity;
+                previousVelocity = rb.GetVelocity();
                 previousAngularVelocity = rb.angularVelocity;
                 rb.isKinematic = true;
             }
 
             if (rb2d)
             {
-                previousVelocity2d = rb2d.velocity;
+                previousVelocity2d = rb2d.GetVelocity();
                 previousAngularVelocity2d = rb2d.angularVelocity;
                 rb2d.isKinematic = true;
             }
@@ -44,7 +44,7 @@ namespace ErksUnityLibrary
             if (rb)
             {
                 rb.isKinematic = false;
-                rb.velocity = previousVelocity;
+                rb.SetVelocity(previousVelocity);
                 rb.angularVelocity = previousAngularVelocity;
                 rb.WakeUp();
             }
@@ -52,7 +52,7 @@ namespace ErksUnityLibrary
             if (rb2d)
             {
                 rb2d.isKinematic = false;
-                rb2d.velocity = previousVelocity2d;
+                rb2d.SetVelocity(previousVelocity2d);
                 rb2d.angularVelocity = previousAngularVelocity2d;
                 rb2d.WakeUp();
             }

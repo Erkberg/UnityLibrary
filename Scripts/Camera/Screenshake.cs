@@ -39,6 +39,7 @@ namespace ErksUnityLibrary
         public void StopShake()
         {
             StopAllCoroutines();
+            transform.localPosition = initialShakePosition;
             shakeOffset = 0f;                      
         }
 

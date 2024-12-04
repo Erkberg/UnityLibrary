@@ -11,6 +11,7 @@ namespace ErksUnityLibrary
         public Vector3 offset;
         public UpdateMode updateMode = UpdateMode.LateUpdate;
         public bool followX = true, followY = true, followZ = false;
+        public bool followRotation = false;
 
         public enum UpdateMode
         {
@@ -23,7 +24,7 @@ namespace ErksUnityLibrary
         {
             if (updateMode == UpdateMode.Update)
             {
-                transform.position = GetPosition();
+                Follow();
             }
         }
 
@@ -31,7 +32,7 @@ namespace ErksUnityLibrary
         {
             if (updateMode == UpdateMode.FixedUpdate)
             {
-                transform.position = GetPosition();
+                Follow();
             }
         }
 
@@ -39,7 +40,17 @@ namespace ErksUnityLibrary
         {
             if (updateMode == UpdateMode.LateUpdate)
             {
-                transform.position = GetPosition();
+                Follow();
+            }
+        }
+
+        private void Follow()
+        {
+            transform.position = GetPosition();
+
+            if(followRotation)
+            {
+                transform.rotation = targetTransform.rotation;
             }
         }
 
