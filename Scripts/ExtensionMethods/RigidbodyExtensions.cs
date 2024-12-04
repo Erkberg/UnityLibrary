@@ -111,6 +111,15 @@ namespace ErksUnityLibrary
             rb2D.velocity = velo;
 #endif
         }
+
+        public static void SetKinematic(this Rigidbody2D rb2D, bool kinematic)
+        {
+#if UNITY_6000_0_OR_NEWER
+            rb2D.bodyType = kinematic ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
+#else
+            rb2D.isKinematic = velo;
+#endif
+        }
     }
 }
 

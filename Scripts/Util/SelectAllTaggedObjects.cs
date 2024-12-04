@@ -13,7 +13,7 @@ namespace ErksUnityLibrary
         [MenuItem("Tools/ErksUnityLibrary/Select all tagged objects")]
         public static void SelectObjectsWithTag()
         {
-            GameObject[] allObjects = GameObject.FindObjectsOfType<GameObject>();
+            GameObject[] allObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             List<GameObject> taggedObjects = new List<GameObject>();
 
             foreach(GameObject go in allObjects)

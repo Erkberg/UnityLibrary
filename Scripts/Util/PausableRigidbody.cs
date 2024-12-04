@@ -35,7 +35,7 @@ namespace ErksUnityLibrary
             {
                 previousVelocity2d = rb2d.GetVelocity();
                 previousAngularVelocity2d = rb2d.angularVelocity;
-                rb2d.isKinematic = true;
+                rb2d.SetKinematic(true);
             }
         }
 
@@ -51,7 +51,7 @@ namespace ErksUnityLibrary
 
             if (rb2d)
             {
-                rb2d.isKinematic = false;
+                rb2d.SetKinematic(false);
                 rb2d.SetVelocity(previousVelocity2d);
                 rb2d.angularVelocity = previousAngularVelocity2d;
                 rb2d.WakeUp();
