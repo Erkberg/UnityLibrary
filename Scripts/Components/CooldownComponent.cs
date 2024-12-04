@@ -13,6 +13,7 @@ namespace ErksUnityLibrary
 
         private float cooldownPassed;
         private bool isOnCooldown;
+        private bool paused;
 
         private void Update()
         {
@@ -21,7 +22,7 @@ namespace ErksUnityLibrary
 
         private void HandleCooldown()
         {
-            if (isOnCooldown)
+            if (isOnCooldown && !paused)
             {
                 cooldownPassed += Time.deltaTime;
                 if (cooldownPassed >= cooldown)
@@ -61,6 +62,11 @@ namespace ErksUnityLibrary
         public float GetCooldownPercentage()
         {
             return cooldownPassed / cooldown;
+        }
+
+        public void SetPaused(bool paused)
+        { 
+            this.paused = paused;
         }
     }
 }
