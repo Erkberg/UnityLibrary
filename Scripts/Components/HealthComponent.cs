@@ -15,16 +15,18 @@ namespace ErksUnityLibrary
         public event Action healthIncreased;
         public event Action healthDecreased;
 
-        public void Damage(float amount)
+        public void Damage(float amount, bool forceCallEvents = false)
         {
-            if (currentHealth > 0)
+            bool hasHealthDecreased = currentHealth > 0 && amount != 0;
+
+            currentHealth -= amount;
+            ClampCurrentHealth();
+
+            if (hasHealthDecreased || forceCallEvents)
             {
                 healthDecreased?.Invoke();
                 healthChanged?.Invoke();
             }
-
-            currentHealth -= amount;
-            ClampCurrentHealth();
 
             if (currentHealth <= 0)
             {
@@ -32,26 +34,23 @@ namespace ErksUnityLibrary
             }
         }
 
-        public void Heal(float amount)
+        public void Heal(float amount, bool forceCallEvents = false)
         {
-            if (currentHealth < maxHealth)
+            bool hasHealthIncreased = currentHealth < maxHealth && amount != 0;
+
+            currentHealth += amount;
+            ClampCurrentHealth();
+
+            if (hasHealthIncreased || forceCallEvents)
             {
                 healthIncreased?.Invoke();
                 healthChanged?.Invoke();
             }
-
-            currentHealth += amount;
-            ClampCurrentHealth();
         }
 
         public float GetHealthPercentage()
         {
             return currentHealth / maxHealth;
-        }
-
-        public void InvokeHealthChanged()
-        {
-            healthChanged?.Invoke();
         }
 
         private void ClampCurrentHealth()
