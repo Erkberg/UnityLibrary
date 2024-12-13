@@ -10,6 +10,7 @@ namespace ErksUnityLibrary
         public Action onCooldownPassed;
 
         [SerializeField] private float cooldown;
+        [SerializeField] private bool autoRestart;
 
         private float cooldownPassed;
         private bool isOnCooldown;
@@ -41,7 +42,11 @@ namespace ErksUnityLibrary
         public void ResetCooldown()
         {
             cooldownPassed = 0;
-            isOnCooldown = false;
+
+            if(!autoRestart)
+            {
+                isOnCooldown = false;
+            }            
         }
 
         public void SetCooldown(float cooldown)
